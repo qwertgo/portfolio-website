@@ -1,0 +1,119 @@
+const leftBtn = document.querySelector(".arrow.left"); 
+const rightBtn = document.querySelector(".arrow.right"); 
+
+const cardTrack = document.querySelector(".card-track");
+const projectContent = document.querySelector(".project-content");
+
+const style = getComputedStyle(cardTrack);
+const cardCount = cardTrack.querySelectorAll(":scope > .card").length;
+const halfCardCount = Math.floor( cardCount / 2);
+const hasEvenCardCount = cardCount % 2 == 0;
+
+const originalContent = cardTrack.innerHTML;
+cardTrack.innerHTML += originalContent + originalContent;
+const allCards = document.querySelectorAll(".card");
+
+let cardIndex = 0;
+
+//remove cards added by script
+let selectableCards = Array.from(allCards);
+selectableCards = selectableCards.slice(cardCount, selectableCards.length - cardCount);
+
+//css variables
+const cardWidth = parseFloat(style.getPropertyValue("--cardWidth"));
+const activeCardWidth = parseFloat(style.getPropertyValue("--activeCardWidth"));
+const cardSpacing = parseFloat(style.getPropertyValue("--cardSpacing"));
+const activeCardSpacing = parseFloat(style.getPropertyValue("--activeCardSpacing"));
+
+//some variables that don't need to be calculated every iteration
+const singleCardOffset = cardWidth + cardSpacing;
+const evenBaseCardOffset = singleCardOffset * .5;
+
+//load page by id name
+async function loadProjectContent(arrayIndex)
+{
+    const contentName = selectableCards[arrayIndex].id;
+
+    try
+    {
+        const response = await fetch(`ProjectContent/${contentName}.html`)
+
+        if(!response.ok)
+            throw new Error(`File not found: ${contentName}`);
+        
+        const htmlData = await response.text();
+
+        projectContent.innerHTML = htmlData;
+    }
+    catch(error)
+    {
+        console.error(error);
+        projectContent.innerHTML = `<p style="color:red;">Error loading content: ${error.message}</p>`;
+    }
+}
+
+//remap index to reflect the index of the card in the array
+function cardToArrayIndex(index)
+{
+    return cardCount - 1 - (index + halfCardCount) % cardCount;
+}
+
+function updateCardSelection(prevCardIndex)
+{
+    const prevArrayIndex = cardToArrayIndex(prevCardIndex);
+    selectableCards[prevArrayIndex].classList.remove("active");
+
+    const arrayIndex = cardToArrayIndex(cardIndex);
+    selectableCards[arrayIndex].classList.add("active");
+
+    let cardOffsetIndex = arrayIndex - halfCardCount;
+    // console.log(cardOffsetIndex);
+
+    if(!hasEvenCardCount && cardOffsetIndex == 0)
+    {
+        animateCardOffset(0);
+        loadProjectContent(arrayIndex);
+        return;
+    }
+
+    let baseOffset;
+    if(hasEvenCardCount)
+    {
+        baseOffset = evenBaseCardOffset;
+        if(cardOffsetIndex >= 0)
+            cardOffsetIndex++;
+    }
+    else
+        baseOffset = singleCardOffset;
+
+    const cardsOffset = singleCardOffset * (Math.max(Math.abs(cardOffsetIndex) - 1, 0));
+    const totalOffset = (baseOffset + cardsOffset) * -Math.sign(cardOffsetIndex);
+
+    animateCardOffset(totalOffset);
+    loadProjectContent(arrayIndex);
+}
+
+function animateCardOffset(newOffset)
+{
+    cardTrack.style.setProperty("--cardOffset", `${newOffset}px`);
+}
+
+rightBtn.addEventListener("click", () => {
+    const prevCardIndex = cardIndex;
+    cardIndex--;
+    
+    if(cardIndex < 0)
+        cardIndex = cardCount - 1;
+
+    updateCardSelection(prevCardIndex);
+});
+
+leftBtn.addEventListener("click", () => {
+    const prevCardIndex = cardIndex;
+    cardIndex++;
+    cardIndex %= cardCount;
+
+    updateCardSelection(prevCardIndex);
+});
+
+updateCardSelection(0);
