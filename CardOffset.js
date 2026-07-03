@@ -59,7 +59,6 @@ function updateCardSelection(prevCardIndex)
 function updateCardPositioning(arrayIndex, instant)
 {
     let cardOffsetIndex = arrayIndex - halfCardCount;
-    // console.log(cardOffsetIndex);
     
     if(!hasEvenCardCount && cardOffsetIndex == 0)
     {
@@ -135,6 +134,12 @@ addEventListener("resize", () => {
     fetchCardVariables();
     updateCardPositioning(cardToArrayIndex(cardIndex), true);
 });
+
+let cardAddition = 0;
+if(hasEvenCardCount)
+    cardAddition = -1;
+
+cardIndex = Math.floor((cardCount + cardAddition) / 2.0);
 
 fetchCardVariables();
 updateCardSelection(0);
