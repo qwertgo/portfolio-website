@@ -20,14 +20,91 @@ let selectableCards = Array.from(allCards);
 selectableCards = selectableCards.slice(cardCount, selectableCards.length - cardCount);
 
 //css variables
-const cardWidth = parseFloat(style.getPropertyValue("--cardWidth"));
-const activeCardWidth = parseFloat(style.getPropertyValue("--activeCardWidth"));
-const cardSpacing = parseFloat(style.getPropertyValue("--cardSpacing"));
-const activeCardSpacing = parseFloat(style.getPropertyValue("--activeCardSpacing"));
+let cardWidth;
+let activeCardWidth;
+let cardSpacing;
+let activeCardSpacing;
+let singleCardOffset;
+let evenBaseCardOffset;
 
-//some variables that don't need to be calculated every iteration
-const singleCardOffset = cardWidth + cardSpacing;
-const evenBaseCardOffset = singleCardOffset * .5;
+fetchCardVariables();
+updateCardSelection(0);
+
+rightBtn.addEventListener("click", () => {
+    const prevCardIndex = cardIndex;
+    cardIndex--;
+    
+    if(cardIndex < 0)
+        cardIndex = cardCount - 1;
+    
+    updateCardSelection(prevCardIndex);
+});
+
+leftBtn.addEventListener("click", () => {
+    const prevCardIndex = cardIndex;
+    cardIndex++;
+    cardIndex %= cardCount;
+    
+    updateCardSelection(prevCardIndex);
+});
+
+//remap index to reflect the index of the card in the array
+function cardToArrayIndex(index)
+{
+    return cardCount - 1 - (index + halfCardCount) % cardCount;
+}
+
+function fetchCardVariables()
+{
+    cardWidth = parseFloat(style.getPropertyValue("--cardWidth"));
+    activeCardWidth = parseFloat(style.getPropertyValue("--activeCardWidth"));
+    cardSpacing = parseFloat(style.getPropertyValue("--cardSpacing"));
+    activeCardSpacing = parseFloat(style.getPropertyValue("--activeCardSpacing"));
+
+    singleCardOffset = cardWidth + cardSpacing;
+    evenBaseCardOffset = singleCardOffset * .5;
+}
+
+function updateCardSelection(prevCardIndex)
+{
+    fetchCardVariables();
+    const prevArrayIndex = cardToArrayIndex(prevCardIndex);
+    const arrayIndex = cardToArrayIndex(cardIndex);
+    
+    selectableCards[prevArrayIndex].classList.remove("active");
+    selectableCards[arrayIndex].classList.add("active");
+    
+    let cardOffsetIndex = arrayIndex - halfCardCount;
+    // console.log(cardOffsetIndex);
+    
+    if(!hasEvenCardCount && cardOffsetIndex == 0)
+    {
+        animateCardOffset(0);
+        loadProjectContent(arrayIndex);
+        return;
+    }
+    
+    let baseOffset;
+    if(hasEvenCardCount)
+    {
+        baseOffset = evenBaseCardOffset;
+        if(cardOffsetIndex >= 0)
+            cardOffsetIndex++;
+    }
+    else
+        baseOffset = singleCardOffset;
+    
+    const cardsOffset = singleCardOffset * (Math.max(Math.abs(cardOffsetIndex) - 1, 0));
+    const totalOffset = (baseOffset + cardsOffset) * -Math.sign(cardOffsetIndex);
+    
+    animateCardOffset(totalOffset);
+    loadProjectContent(arrayIndex);
+}
+        
+function animateCardOffset(newOffset)
+{
+    cardTrack.style.setProperty("--cardOffset", `${newOffset}px`);
+}
 
 //load page by id name
 async function loadProjectContent(arrayIndex)
@@ -51,69 +128,3 @@ async function loadProjectContent(arrayIndex)
         projectContent.innerHTML = `<p style="color:red;">Error loading content: ${error.message}</p>`;
     }
 }
-
-//remap index to reflect the index of the card in the array
-function cardToArrayIndex(index)
-{
-    return cardCount - 1 - (index + halfCardCount) % cardCount;
-}
-
-function updateCardSelection(prevCardIndex)
-{
-    const prevArrayIndex = cardToArrayIndex(prevCardIndex);
-    selectableCards[prevArrayIndex].classList.remove("active");
-
-    const arrayIndex = cardToArrayIndex(cardIndex);
-    selectableCards[arrayIndex].classList.add("active");
-
-    let cardOffsetIndex = arrayIndex - halfCardCount;
-    // console.log(cardOffsetIndex);
-
-    if(!hasEvenCardCount && cardOffsetIndex == 0)
-    {
-        animateCardOffset(0);
-        loadProjectContent(arrayIndex);
-        return;
-    }
-
-    let baseOffset;
-    if(hasEvenCardCount)
-    {
-        baseOffset = evenBaseCardOffset;
-        if(cardOffsetIndex >= 0)
-            cardOffsetIndex++;
-    }
-    else
-        baseOffset = singleCardOffset;
-
-    const cardsOffset = singleCardOffset * (Math.max(Math.abs(cardOffsetIndex) - 1, 0));
-    const totalOffset = (baseOffset + cardsOffset) * -Math.sign(cardOffsetIndex);
-
-    animateCardOffset(totalOffset);
-    loadProjectContent(arrayIndex);
-}
-
-function animateCardOffset(newOffset)
-{
-    cardTrack.style.setProperty("--cardOffset", `${newOffset}px`);
-}
-
-rightBtn.addEventListener("click", () => {
-    const prevCardIndex = cardIndex;
-    cardIndex--;
-    
-    if(cardIndex < 0)
-        cardIndex = cardCount - 1;
-
-    updateCardSelection(prevCardIndex);
-});
-
-leftBtn.addEventListener("click", () => {
-    const prevCardIndex = cardIndex;
-    cardIndex++;
-    cardIndex %= cardCount;
-
-    updateCardSelection(prevCardIndex);
-});
-
-updateCardSelection(0);

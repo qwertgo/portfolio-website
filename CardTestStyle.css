@@ -1,24 +1,32 @@
 :root{
-    --cardWidth: 180px;
-    --cardHeight: 252px;
-    --activeCardWidth: 300px;
-    --activeCardHeight: 420px;
+    /* --cardWidth: 135px;
+    --cardHeight: 189px;
+    --activeCardWidth: 225px;
+    --activeCardHeight: 315px; */
+    --cardWidth: 90px;
+    --cardHeight: 126px;
+    --activeCardWidth: 150px;
+    --activeCardHeight: 210px;
     
-    --cardSpacing: 80px;
-    --activeCardSpacing: 180px;
+    --cardSelectionTopMargin: 140px;
+    --cardSpacing: 20px;
+    --activeCardSpacing: 60px;
+    
+    --cardShadowOpacity: .6;
+    --cardTrackHeightAddition: 40px;
 
-    --cardSelectionTopMargin: 120px;
-    --cardIndex: 0;
     --buttonMargin: 20px;
-
-    --arrowLeftXPos: 0;
-    --arrowRightXPos: 0;
+    --cardIndex: 0;
 
     --cardOffset: 0px;
 
-    --bgColorTop:#697374;
+    --bgColorTop:#4B565E;
     --bgColorBottom: #282930;
+    --cardSelectionHeight:0;
+    --arrowTranslate: 0;
 }
+
+/* #region fonts */
 
 .darumadrop-one-regular {
   font-family: "Darumadrop One", sans-serif;
@@ -26,155 +34,208 @@
   font-style: normal;
 }
 
-body{
+.ubuntu-regular {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.ubuntu-medium {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.ubuntu-bold {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.ubuntu-medium-italic {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 500;
+  font-style: italic;
+}
+
+/* #endregion */
+
+*{
     padding: 0;
     margin: 0;
-    font-family: Ubuntu, Helvetica, sans-serif;
-    
-    background:
-    url(ref/Gradients/Dotted_1.2_Tileable_Colored.png)
-    center 240px / auto 300px repeat-x,
-    
-        linear-gradient(
-            to bottom,
-            var(--bgColorTop) 0,
-            var(--bgColorTop) 540px,
-            var(--bgColorBottom) 540px,
-            var(--bgColorBottom) 100%
-        );
+    font-family: "Ubuntu", Helvetica, sans-serif;
 }
+
+body{
+    background-color: var(--bgColorBottom);
+}
+
+.background-gradient{
+    background-color: var(--bgColorBottom);
+    position: absolute;
+    height: 180px;
+    width: 100%;
+    z-index: -9;
+    top: calc(400px - 180px);
+
+    -webkit-mask-image: url("ref/Gradients/Dotted_TileableMask.png");
+    mask-image: url(ref/Gradients/Dotted_TileableMask.png);
+    
+    -webkit-mask-mode: alpha;
+    mask-mode: alpha;
+
+    -webkit-mask-repeat: repeat-x;
+    mask-repeat: repeat-x;
+
+    -webkit-mask-position: left top;
+    mask-position: left top;
+
+    -webkit-mask-size: auto 100%;
+    mask-size: auto 100%;
+}
+
+.background-upper{
+    background-color: var(--bgColorTop);
+    position: absolute;
+    top: 0px;
+    height: 400px;
+    width: 100%;
+    z-index: -10;
+}
+
+/* #region header */
 
 header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 10px;
-}
-
-header h1, header h2{
-    color: white;
-    margin: auto 40px 0px 40px;
+    margin-top: 53px;
+    margin-left: 24px;
 }
 
 header h1{
-    font-family: "Darumadrop One", Ubuntu, Helvetica;
-    font-size: 40px;
+    color: white;
+    font-family: "Darumadrop One", Helvetica, sans-serif ;
+    font-size: 21pt;
 }
 
 header h2 {
-    font-style:italic;
-    font-size: 20px;
-    color:#d6d6d6;
-    margin-bottom: 10px;
+    font-weight: 500;
+    font-style: italic;
+     font-size: 13pt;
+    color:#DFDFDF;
 }
 
+/* #endregion */
+
+
+/* #region cards */
 .card-selection{
-    position: absolute;
-    height: calc(var(--activeCardHeight) + 40px);
+    --cardSelectionHeight: calc(var(--activeCardHeight) + calc(var(--cardTrackHeightAddition) * 2));
+    height: var(--cardSelectionHeight);
+    position: relative;
     overflow: hidden;
-    top: var(--cardSelectionTopMargin);
-    left: 50%;
-    transform: translateX(-50%);
+    margin-top: calc(var(--cardTrackHeightAddition) * -1 + 35px);
 }
 
 .card-track{
     display: flex;
-    width: 100%;
-    margin: 0 auto;
-
+    justify-content: center;
+    align-items: center;
+    height: 100%;
     transform: translateX(var(--cardOffset));
 }
 
 .card{
-    position: relative;
-    width: var(--cardWidth);
+    min-width: var(--cardWidth);
     height: var(--cardHeight);
     margin: 0 calc(var(--cardSpacing) * .5);
 }
 
 .card.active{
-    width: var(--activeCardWidth);
+    min-width: var(--activeCardWidth);
     height: var(--activeCardHeight);
-    margin: 0 calc(var(--activeCardSpacing) * .5);
+    margin: auto calc(var(--activeCardSpacing) * .5);
 }
 
 .card img {
     border-radius: 5%;
     height: 100%;
     width: 100%;;
-    filter: drop-shadow(0px 12px 2px rgb(0 0 0 / 0.5));
+    filter: drop-shadow(0px 12px 2px rgb(0 0 0 / var(--cardShadowOpacity)));
 }
 
 .card.active img {
-    filter: drop-shadow(0px 30px 6px rgb(0 0 0 / 0.5));
+    filter: drop-shadow(0px 30px 5px rgb(0 0 0 / var(--cardShadowOpacity)));
 }
 
-.card h2 {
-    position: absolute;
-    bottom: 10px;
+.card p {
+    position: relative;
+    bottom: 12%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50% );
     text-align: center;
     z-index: 1;
     color: white;
 }
 
+#Ecospire p{
+    color: black;
+}
 
+/* #endregion */
+
+
+/* #region card arrows */
 .arrow{
     position: absolute;
-    top: calc(50% - 25px);
-    
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    border: none;
-    font-size: 30px;
-    cursor: pointer;
-    transition: .2s ease;
-    z-index: 5;
-}
-
-.arrow:hover{
-    background: #8c8c8c;
-}
-
-.arrow.left:hover{
-    transform: var(--arrowLeftXPos) scale(1.2);
-}
-
-.arrow.right:hover{
-    transform: var(--arrowRightXPos) scale(1.2);
-}
-
-.arrow:active{
-    background: #444;
+    border: solid;
+    border-color: white;
+    background-color: var(--bgColorBottom);
     color: white;
+    text-align: center;
+    font-size: 30px;
+    z-index: 10;
+    top: 50%;
+    left: 50%;
+}
+
+.arrow.left:hover, .arrow.right:hover{
+    background-color: #3F4C5E;
+    transition: .2s ease;
+    transform: var(--arrowTranslate) scale(1.3);
+}
+
+.arrow.left:active, .arrow.right:active{
+    background-color: #9DC3CC;
+    color: black;
+    border-color: black;
 }
 
 .arrow.left{
-    left: 50%;
-
-    --arrowLeftXPos: translateX(
-        calc(-100% - var(--activeCardWidth) * .5 - var(--buttonMargin)
-    ));
-    transform: var(--arrowLeftXPos);
+    --arrowTranslate: translate(calc(-100% - var(--activeCardWidth) * .5 - var(--buttonMargin)), -50%);
+    transform: var(--arrowTranslate);
 }
 
 .arrow.right{
-    right:50%;
-
-    --arrowRightXPos: translateX(
-        calc(100% + var(--activeCardWidth) * .5 + var(--buttonMargin)
-    ));
-    transform: var(--arrowRightXPos);
+    --arrowTranslate: translate(calc(var(--activeCardWidth) * .5 + var(--buttonMargin)), -50%);
+    transform: var(--arrowTranslate);
 }
+
+/* #endregion */
 
 .project-content{
     text-align: center;
     color: white;
     font-size: 55px;
-    margin-top: 550px;
-    height: 1000px;
+    margin-top: 10px;
+    margin-bottom: 50px;
+}
+
+h3{
+    font-size: 32pt;
+    color: #C9E7DF;
+     filter: drop-shadow(0px 5px 0px rgb(0 0 0 / var(--cardShadowOpacity)));
 }
 
 footer 
