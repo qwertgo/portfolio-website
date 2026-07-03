@@ -1,8 +1,5 @@
 :root{
-    /* --cardWidth: 135px;
-    --cardHeight: 189px;
-    --activeCardWidth: 225px;
-    --activeCardHeight: 315px; */
+    /* cards */
     --cardWidth: 90px;
     --cardHeight: 126px;
     --activeCardWidth: 150px;
@@ -20,10 +17,13 @@
 
     --cardOffset: 0px;
 
+    /* background */
     --bgColorTop:#4B565E;
     --bgColorBottom: #282930;
     --cardSelectionHeight:0;
     --arrowTranslate: 0;
+    --bgGradientHeight: 180px;
+    --bgGradientOffset: 400px;
 }
 
 /* #region fonts */
@@ -58,6 +58,13 @@
   font-style: italic;
 }
 
+@font-face{
+    font-family: "BigBoy";
+    src: url("ref/Bigboy.ttf") format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 /* #endregion */
 
 *{
@@ -66,6 +73,8 @@
     font-family: "Ubuntu", Helvetica, sans-serif;
 }
 
+/* #region background */
+
 body{
     background-color: var(--bgColorBottom);
 }
@@ -73,10 +82,10 @@ body{
 .background-gradient{
     background-color: var(--bgColorBottom);
     position: absolute;
-    height: 180px;
+    height: var(--bgGradientHeight);
     width: 100%;
     z-index: -9;
-    top: calc(400px - 180px);
+    top: calc(var(--bgGradientOffset) - var(--bgGradientHeight));
 
     -webkit-mask-image: url("ref/Gradients/Dotted_TileableMask.png");
     mask-image: url(ref/Gradients/Dotted_TileableMask.png);
@@ -98,10 +107,12 @@ body{
     background-color: var(--bgColorTop);
     position: absolute;
     top: 0px;
-    height: 400px;
+    height: var(--bgGradientOffset);
     width: 100%;
     z-index: -10;
 }
+
+/* #endregion */
 
 /* #region header */
 
@@ -110,21 +121,20 @@ header {
     margin-left: 24px;
 }
 
-header h1{
+h1{
     color: white;
     font-family: "Darumadrop One", Helvetica, sans-serif ;
     font-size: 21pt;
 }
 
-header h2 {
+h2 {
     font-weight: 500;
     font-style: italic;
-     font-size: 13pt;
+    font-size: 13pt;
     color:#DFDFDF;
 }
 
 /* #endregion */
-
 
 /* #region cards */
 .card-selection{
@@ -167,13 +177,22 @@ header h2 {
 }
 
 .card p {
+    font-family: 'BigBoy', Helvetica, sans-serif;
+    letter-spacing: 10%;
+    font-size: 8pt;
+    text-align: center;
+    color: #f0f0f0;
+
     position: relative;
-    bottom: 12%;
+    bottom: 14%;
     left: 50%;
     transform: translate(-50%, -50% );
-    text-align: center;
     z-index: 1;
-    color: white;
+}
+
+.card.active p {
+    font-size: 15pt;
+    bottom: 13%;
 }
 
 #Ecospire p{
@@ -181,7 +200,6 @@ header h2 {
 }
 
 /* #endregion */
-
 
 /* #region card arrows */
 .arrow{
@@ -235,7 +253,7 @@ header h2 {
 h3{
     font-size: 32pt;
     color: #C9E7DF;
-     filter: drop-shadow(0px 5px 0px rgb(0 0 0 / var(--cardShadowOpacity)));
+    filter: drop-shadow(0px 5px 0px rgb(0 0 0 / var(--cardShadowOpacity)));
 }
 
 footer 
@@ -247,5 +265,140 @@ footer
 
 footer p {
     margin: 10px auto;
+}
+
+@media (min-width: 640px) {
+    :root{
+        --cardWidth: 135px;
+        --cardHeight: 189px;
+        --activeCardWidth: 225px;
+        --activeCardHeight: 315px;
+
+        --cardSpacing: 20px;
+        --activeCardSpacing: 60px;
+        --buttonMargin: 20px;
+
+        --bgGradientHeight: 280px;
+        --bgGradientOffset: 475px;
+    }
+
+    h1{
+        font-size: 26pt;
+    }
+
+    h2{
+        font-size: 16pt;
+    }
+
+    h3{
+        font-size: 40pt;
+        filter: drop-shadow(0px 7.5px 0px rgb(0 0 0 / var(--cardShadowOpacity)));
+    }
+
+    .card p {
+        font-size: 11pt;
+        bottom: 12%;
+    }
+
+    .card.active p {
+        font-size: 22.5pt;
+        bottom: 12%;
+    }
+}
+
+@media (min-width: 1025px)
+{
+    :root{
+        --cardWidth: 180px;
+        --cardHeight: 252px;
+        --activeCardWidth: 300px;
+        --activeCardHeight: 420px;
+
+        --cardSpacing: 80px;
+        --activeCardSpacing: 180px;
+        --buttonMargin: 40px;
+
+        --bgGradientHeight: 380px;
+        --bgGradientOffset: 550px;
+    }
+
+    header {
+        margin-top: 25px;
+        margin-left: 25px;
+    }
+
+    h1{
+        font-size: 31.5pt;
+    }
+
+    h2{
+        font-size: 19.5pt;
+    }
+
+    h3{
+        font-size: 48pt;
+        filter: drop-shadow(0px 10px 0px rgb(0 0 0 / var(--cardShadowOpacity)));
+    }
+
+    .card p {
+        font-size: 14pt;
+        bottom: 12%;
+    }
+
+    .card.active p {
+        font-size: 30pt;
+        bottom: 12%;
+    }
+}
+
+@media (min-width: 3000px)
+{
+    :root{
+        --cardWidth: 360px;
+        --cardHeight: 504px;
+        --activeCardWidth: 600px;
+        --activeCardHeight: 840px;
+
+        --cardSpacing: 120px;
+        --activeCardSpacing: 300px;
+        --buttonMargin: 50px;
+        --bgGradientHeight: 600px;
+        --bgGradientOffset: 850px;
+    }
+
+    .arrow{
+        width: 100px;
+        height: 100px;
+        border-width: 5px;
+    }
+
+    header {
+        margin-top: 50px;
+        margin-left: 25px;
+    }
+
+    h1{
+        font-size: 41pt;
+    }
+
+    h2{
+        font-size: 26pt;
+    }
+
+    h3{
+        font-size: 100pt;
+        filter: drop-shadow(0px 15px 0px rgb(0 0 0 / var(--cardShadowOpacity)));
+    }
+
+    .card p {
+        font-size: 30pt;
+        bottom: 11%;
+    }
+
+    .card.active p {
+        font-size: 60pt;
+        bottom: 10.5%;
+    }
+
 }
 

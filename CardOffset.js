@@ -27,27 +27,6 @@ let activeCardSpacing;
 let singleCardOffset;
 let evenBaseCardOffset;
 
-fetchCardVariables();
-updateCardSelection(0);
-
-rightBtn.addEventListener("click", () => {
-    const prevCardIndex = cardIndex;
-    cardIndex--;
-    
-    if(cardIndex < 0)
-        cardIndex = cardCount - 1;
-    
-    updateCardSelection(prevCardIndex);
-});
-
-leftBtn.addEventListener("click", () => {
-    const prevCardIndex = cardIndex;
-    cardIndex++;
-    cardIndex %= cardCount;
-    
-    updateCardSelection(prevCardIndex);
-});
-
 //remap index to reflect the index of the card in the array
 function cardToArrayIndex(index)
 {
@@ -74,12 +53,17 @@ function updateCardSelection(prevCardIndex)
     selectableCards[prevArrayIndex].classList.remove("active");
     selectableCards[arrayIndex].classList.add("active");
     
+    updateCardPositioning(arrayIndex, false);
+}
+
+function updateCardPositioning(arrayIndex, instant)
+{
     let cardOffsetIndex = arrayIndex - halfCardCount;
     // console.log(cardOffsetIndex);
     
     if(!hasEvenCardCount && cardOffsetIndex == 0)
     {
-        animateCardOffset(0);
+        animateCardOffset(0, instant);
         loadProjectContent(arrayIndex);
         return;
     }
@@ -97,11 +81,11 @@ function updateCardSelection(prevCardIndex)
     const cardsOffset = singleCardOffset * (Math.max(Math.abs(cardOffsetIndex) - 1, 0));
     const totalOffset = (baseOffset + cardsOffset) * -Math.sign(cardOffsetIndex);
     
-    animateCardOffset(totalOffset);
+    animateCardOffset(totalOffset, instant);
     loadProjectContent(arrayIndex);
 }
         
-function animateCardOffset(newOffset)
+function animateCardOffset(newOffset, instant)
 {
     cardTrack.style.setProperty("--cardOffset", `${newOffset}px`);
 }
@@ -128,3 +112,29 @@ async function loadProjectContent(arrayIndex)
         projectContent.innerHTML = `<p style="color:red;">Error loading content: ${error.message}</p>`;
     }
 }
+
+rightBtn.addEventListener("click", () => {
+    const prevCardIndex = cardIndex;
+    cardIndex--;
+    
+    if(cardIndex < 0)
+        cardIndex = cardCount - 1;
+    
+    updateCardSelection(prevCardIndex);
+});
+
+leftBtn.addEventListener("click", () => {
+    const prevCardIndex = cardIndex;
+    cardIndex++;
+    cardIndex %= cardCount;
+    
+    updateCardSelection(prevCardIndex);
+});
+
+addEventListener("resize", () => {
+    fetchCardVariables();
+    updateCardPositioning(cardToArrayIndex(cardIndex), true);
+});
+
+fetchCardVariables();
+updateCardSelection(0);
