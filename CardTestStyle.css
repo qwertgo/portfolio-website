@@ -195,7 +195,7 @@ h2 {
     bottom: 13%;
 }
 
-#Ecospire p, #boasff p, #MajorTom p{
+#Ecospire p, #MajorTom p {
     color: black;
 }
 
@@ -210,12 +210,17 @@ h2 {
     border: solid;
     border-color: white;
     background-color: var(--bgColorBottom);
-    color: white;
     text-align: center;
     font-size: 30px;
     z-index: 10;
     top: 50%;
     left: 50%;
+}
+
+.arrow img
+{
+    width: 50%;
+    height: 50%;
 }
 
 .arrow.left:hover, .arrow.right:hover{
@@ -226,8 +231,7 @@ h2 {
 
 .arrow.left:active, .arrow.right:active{
     background-color: #9DC3CC;
-    color: black;
-    border-color: black;
+    border-color: var(--bgColorBottom);
 }
 
 .arrow.left{
@@ -306,8 +310,7 @@ footer p {
     }
 }
 
-@media (min-width: 1025px)
-{
+@media (min-width: 1025px){
     :root{
         --cardWidth: 180px;
         --cardHeight: 252px;
@@ -351,8 +354,7 @@ footer p {
     }
 }
 
-@media (min-width: 3000px)
-{
+@media (min-width: 3000px){
     :root{
         --cardWidth: 360px;
         --cardHeight: 504px;
@@ -399,5 +401,4 @@ footer p {
         font-size: 60pt;
         bottom: 10.5%;
     }
-
 }
