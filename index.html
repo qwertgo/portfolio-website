@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Card Test</title>
-    <link rel="stylesheet" href="CardTestStyle.css">
+    <title>Portfolio Samuel Galonska</title>
+    <link rel="stylesheet" href="MainPageStyle.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,6 +32,16 @@
         </button>
 
         <div class="card-track">
+            <div class="card" id="Seashaken">
+                <img src="ref/Cards/Seashaken_300.webp"
+                srcset="ref/Cards/Seashaken_150.webp 150w, 
+                    ref/Cards/Seashaken_225.webp 225w,
+                    ref/Cards/Seashaken_300.webp 300w"
+                sizes="(max-width: 639px) 150px, (max-width: 999px) 225px, 300px"
+                alt="light house in a video game">
+                <p>Seashaken</p>
+            </div>
+            
             <div class="card" id="AboutMe">
                 <img src="ref/Cards/AboutMe.webp" alt="About Me">
                 <p>About Me</p>
@@ -55,16 +65,6 @@
                 sizes="(max-width: 639px) 150px, (max-width: 999px) 225px, 300px"
                 alt="flying spherical roboter on neutral background">
                 <p>Ecospire</p>
-            </div>
-
-            <div class="card" id="Seashaken">
-                <img src="ref/Cards/Seashaken_300.webp"
-                srcset="ref/Cards/Seashaken_150.webp 150w, 
-                    ref/Cards/Seashaken_225.webp 225w,
-                    ref/Cards/Seashaken_300.webp 300w"
-                sizes="(max-width: 639px) 150px, (max-width: 999px) 225px, 300px"
-                alt="light house in a video game">
-                <p>Seashaken</p>
             </div>
             
             <div class="card" id="Nebio">
@@ -114,10 +114,7 @@
     </section>
 
     <footer>
-        <h4>Impressum</h4>
-        <p>Samuel Galonska</p>
-        <p>Coole Straße 34</p>
-        <p>10318 Berlin</p>
+        <a href="Impressum.html"><p><b>Impressum</b></p></a>
     </footer>
 
     <script src="CardOffset.js"></script>
