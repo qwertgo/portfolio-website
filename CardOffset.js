@@ -103,6 +103,7 @@ async function loadProjectContent(arrayIndex)
         
         const htmlData = await response.text();
 
+        projectContent.innerHTML = '';
         projectContent.innerHTML = htmlData;
     }
     catch(error)

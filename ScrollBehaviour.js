@@ -1,20 +1,20 @@
 projectContent.addEventListener('wheel', (e) => {
-    const slider = e.target.closest('.project-images');
+    const hoveredEl = document.elementFromPoint(e.clientX, e.clientY);
+    const slider = hoveredEl ? hoveredEl.closest('.image-slide') : null;
     if (!slider) return;
 
     const maxScrollLeft = slider.scrollWidth - slider.clientWidth;
-    if (maxScrollLeft <= 0) return; // nothing to scroll at all
+    if (maxScrollLeft <= 0) return;
 
     const atStart = slider.scrollLeft <= 0;
     const atEnd = slider.scrollLeft >= maxScrollLeft;
-
-    const scrollingUp = e.deltaY < 0;   // would move slider left
-    const scrollingDown = e.deltaY > 0; // would move slider right
+    const scrollingUp = e.deltaY < 0;
+    const scrollingDown = e.deltaY > 0;
 
     if ((atStart && scrollingUp) || (atEnd && scrollingDown)) {
-        return; // let the event pass through to normal page scroll
+        return;
     }
 
     e.preventDefault();
-    slider.scrollLeft += e.deltaY;
+    slider.scrollLeft += e.deltaY * 2;
 }, { passive: false });
