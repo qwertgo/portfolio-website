@@ -20,6 +20,7 @@
     /* background */
     --bgColorTop:#4B565E;
     --bgColorBottom: #282930;
+    --bgColorMid: #313B44;
     --cardSelectionHeight:0;
     --arrowTranslate: 0;
     --bgGradientHeight: 180px;
@@ -151,6 +152,7 @@ h2 {
     align-items: center;
     height: 100%;
     transform: translateX(var(--cardOffset));
+    transition: .3s;
 }
 
 .card{
@@ -262,7 +264,8 @@ h3{
 }
 
 .main-panel{
-    margin: 0 25px;
+    --marginMainPanel: 25px;
+    margin: 0 var(--marginMainPanel);
 }
 
 .main-panel.second{
@@ -451,6 +454,17 @@ h4{
     margin-top: 35px;
 }
 
+.slide-bg-right{
+    background-color: var(--bgColorTop);
+    position: absolute;
+    left:0;
+    top:0;
+    overflow-x: auto;
+    width: 100%;
+    height: 100%;
+    z-index: -5;
+}
+
 .image-slide{
     height: var(--h);
     position: relative;
@@ -460,6 +474,7 @@ h4{
     box-sizing: border-box;
     overflow-x: auto;
     overflow-y: hidden;
+
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
@@ -468,6 +483,7 @@ h4{
 .image-slide::-webkit-scrollbar {
   display: none;
 }
+
 
 .slide-bg-gradient{
     position: absolute;
@@ -492,19 +508,8 @@ h4{
     mask-size: auto 100%;
 }
 
-.slide-bg-right{
-    background-color: var(--bgColorTop);
-    position: absolute;
-    left:0;
-    top:0;
-    overflow-x: auto;
-    width: 800vw;
-    height: 100%;
-    z-index: -5;
-}
-
 .slide-bg-left{
-    background-color: #313B44;
+    background-color: var(--bgColorMid);
     position: absolute;
     top: 0;
     left: 0;
@@ -534,6 +539,80 @@ h4{
 
 /* #endregion */
 
+/* #region Info Text  */
+.socials-wrapper{
+    height: 80px;
+    width: 100vw;
+    margin-left: calc(var(--marginMainPanel) * -1);
+    background-color: var(--bgColorMid);
+    margin-top:10px;
+    margin-bottom: 25px;
+}
+
+.socials{
+    height: 100%;
+    width: auto;
+    margin: 0 var(--marginMainPanel);
+    display: flex;
+    justify-content: space-around;
+    align-content: space-between;
+    position:relative;
+}
+
+.socials a{
+    transition: .2s;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    filter: drop-shadow(0 5px rgb(0 0 0 / var(--cardShadowOpacity)));
+}
+
+.socials a:hover{
+    cursor: pointer;
+    transition: .2s;
+    transform: translateY(-5px);
+    filter: drop-shadow(0 10px rgb(0 0 0 / var(--cardShadowOpacity)));
+}
+
+.socials a img{
+    width: 80%;
+    aspect-ratio: 1 / 1;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 25%;
+}
+
+.socials a p{
+    position: absolute;
+    bottom: 15%;
+    margin-bottom: 0;
+    text-align: center;
+    text-decoration: inherit;
+    color: inherit;
+    width: 100%;
+}
+
+.main-panel ul{
+    margin-bottom: 20px;
+    padding-left: 18px;
+}
+
+.second h4{
+    margin-bottom: 4px;
+    margin-top: 10px;
+}
+
+.second p{
+    margin-bottom: 4px;
+}
+
+.subheader{
+    font-weight: 500;
+    font-style: italic;
+}
+
+/* #endregion */
+
 /* #endregion */
 
 /* #region Footer */
@@ -552,9 +631,12 @@ h4{
     margin: 10px auto;
 }
 
-footer a, .impressum a{
+a{
     text-decoration: inherit;
     color: inherit;
+}
+
+footer a, .impressum a{
     display: inline-block;
     text-shadow: 0px 3px 1px rgb(0 0 0 / var(--cardShadowOpacity));
 }
