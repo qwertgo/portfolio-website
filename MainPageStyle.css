@@ -264,6 +264,10 @@ h3{
 .main-panel{
     margin: 0 25px;
 }
+
+.main-panel.second{
+    text-align: left;
+}
 /* #region Quick Facts */
 
 .quick-facts{
@@ -396,10 +400,7 @@ h4{
     margin-top: 23px;
     display: flex;
     justify-content: space-between;
-}
-
-.percentage-stats p{
-    font-size: 5pt;
+    pointer-events: none;
 }
 
 .percentage-stats .fact{
@@ -423,8 +424,8 @@ h4{
 }
 
 .percentage-stats .spec{
-    font-size: 6pt;
-    bottom: 7px;
+    font-size: 6.5pt;
+    bottom: 6px;
 }
 
 .programming{
@@ -439,7 +440,95 @@ h4{
     background-color: #71283E;
 }
 
-/* #enregion */
+/* #endregion */
+
+/* #region Image Slide */
+.image-slide{
+    --h: 230px;
+    height: var(--h);
+    margin-top: 35px;
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    min-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.slide-bg-gradient{
+    position: absolute;
+    top: 0;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    left: 50vw;
+    transform: translateX(-50%);
+    background-color: var(--bgColorTop);
+    z-index: -1;
+
+    -webkit-mask-image: url("ref/Gradients/Dotted.webp");
+    mask-image: url(ref/Gradients/Dotted.webp);
+    
+    -webkit-mask-mode: alpha;
+    mask-mode: alpha;
+
+    -webkit-mask-position: left top;
+    mask-position: left top;
+
+    -webkit-mask-size: auto 100%;
+    mask-size: auto 100%;
+}
+
+.slide-bg-right{
+    background-color: var(--bgColorTop);
+    position: absolute;
+    left:0;
+    top:0;
+    width: 100%;
+    height: 100%;
+    z-index: -5;
+}
+
+.slide-bg-left{
+    background-color: #313B44;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: calc(50vw + var(--h) / 2 - 1px);
+    z-index: -2;
+}
+
+.project-images{
+    --imgMargin: 25px;
+    margin: var(--imgMargin) 25px;
+    height: calc(100% - var(--imgMargin) * 2);
+    display: flex;
+    align-items: center;
+    gap:10px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+.project-images img{
+    height: 100%;
+    width: auto;
+    flex-shrink: 0;
+    display: block;
+}
+
+.project-images::-webkit-scrollbar {
+  display: none;
+}
+.project-images {
+  scrollbar-width: none;
+}
+
+
+/* #endregion */
 
 /* #endregion */
 
