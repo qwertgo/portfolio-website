@@ -17,6 +17,14 @@
 
     --cardOffset: 0px;
 
+    --mainPanelWidth: 325px;
+
+    /* Image Slide Arrows */
+    --imageArrowMarginMin: 10px;
+    --imageArrowMarginMax: 20px;
+    --rightImageArrowOpacity: .5;
+    --leftImageArrowOpacity: 0;
+
     /* background */
     --bgColorTop:#4B565E;
     --bgColorBottom: #282930;
@@ -264,8 +272,8 @@ h3{
 }
 
 .main-panel{
-    --marginMainPanel: 25px;
-    margin: 0 var(--marginMainPanel);
+    width: var(--mainPanelWidth);
+    margin: 0 auto;
 }
 
 .main-panel.second{
@@ -465,6 +473,52 @@ h4{
     z-index: -5;
 }
 
+.slide-parent .arrow{
+    width: 30px;
+    height: 30px;
+    border-radius: 0;
+    border-style: none;
+    background-color: inherit;
+    transform: translateY(-50%);
+    
+    animation-duration: .7s;
+    animation-direction: alternate;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+}
+
+.slide-parent .arrow.right{
+    opacity: var(--rightImageArrowOpacity);
+    animation-name: right-arrow;
+    left: auto;
+}
+
+.slide-parent .arrow.left{
+    opacity: var(--leftImageArrowOpacity);
+    animation-name: left-arrow;
+    right: auto;
+}
+
+@keyframes right-arrow{
+    from{
+        right: var(--imageArrowMarginMin);
+    }
+
+    to{
+        right: var(--imageArrowMarginMax);
+    }
+}
+
+@keyframes left-arrow{
+    from{
+        left: var(--imageArrowMarginMin);
+    }
+
+    to{
+        left: var(--imageArrowMarginMax);
+    }
+}
+
 .image-slide{
     height: var(--h);
     position: relative;
@@ -543,7 +597,8 @@ h4{
 .socials-wrapper{
     height: 80px;
     width: 100vw;
-    margin-left: calc(var(--marginMainPanel) * -1);
+    --mainPanelLeftMargin: calc((100vw - var(--mainPanelWidth)) * -0.5);
+    margin-left: var(--mainPanelLeftMargin);
     background-color: var(--bgColorMid);
     margin-top:10px;
     margin-bottom: 25px;
@@ -551,8 +606,8 @@ h4{
 
 .socials{
     height: 100%;
-    width: auto;
-    margin: 0 var(--marginMainPanel);
+    width: var(--mainPanelWidth);
+    margin-left: calc(var(--mainPanelLeftMargin) * -1);
     display: flex;
     justify-content: space-around;
     align-content: space-between;
@@ -661,6 +716,8 @@ footer a:hover, .impressum a:hover{
 
         --bgGradientHeight: 280px;
         --bgGradientOffset: 475px;
+
+        --mainPanelWidth: 600px;
     }
 
     h1{
@@ -685,6 +742,12 @@ footer a:hover, .impressum a:hover{
         font-size: 22.5pt;
         bottom: 12%;
     }
+
+    /* .quick-facts .fact{
+        width: 140px;
+        height: 72px;
+        border-radius: 8px;
+    } */
 }
 
 @media (min-width: 1025px){

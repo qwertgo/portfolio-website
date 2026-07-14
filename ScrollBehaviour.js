@@ -6,6 +6,13 @@ projectContent.addEventListener('wheel', (e) => {
     const maxScrollLeft = slider.scrollWidth - slider.clientWidth;
     if (maxScrollLeft <= 0) return;
 
+    const scrollPercentage = slider.scrollLeft / maxScrollLeft;
+
+    const opacityRight = scrollPercentage < .7 ? 0.5 : 0;
+    const opacityLeft = scrollPercentage > .3 ? 0.5 : 0;
+    projectContent.style.setProperty("--rightImageArrowOpacity", opacityRight);
+    projectContent.style.setProperty("--leftImageArrowOpacity", opacityLeft);
+
     const atStart = slider.scrollLeft <= 0;
     const atEnd = slider.scrollLeft >= maxScrollLeft;
     const scrollingUp = e.deltaY < 0;
