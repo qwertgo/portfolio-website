@@ -3,21 +3,21 @@
 <div class="main-panel">
     <div class="quick-facts">
         <div class="time-frame fact">
-            <img src="/ref/Icons/Timeframe.svg" alt="hourglass">
+            <img src="ref/Icons/Timeframe.svg" alt="hourglass">
             <p class="number">3</p>
             <p class="spec">Months</p>
         </div>
         <div class="team fact">
-            <img src="/ref/Icons/Team.svg" alt="3 People">
+            <img src="ref/Icons/Team.svg" alt="3 People">
             <p class="number">4</p>
             <p class="spec">Person Team</p>
         </div>
         <div class="context fact">
-            <img src="/ref/Icons/Context.svg" alt="Pentagon with questionmark in it's center">
+            <img src="ref/Icons/Context.svg" alt="Pentagon with questionmark in it's center">
             <p class="spec">Student Project</p>
         </div>
         <div class="engine fact">
-            <img src="/ref/Icons/Engine.svg" alt="Engine">
+            <img src="ref/Icons/Engine.svg" alt="Engine">
             <p class="spec">Unity</p>
         </div>
     </div>
@@ -53,6 +53,8 @@
 
 <div class="slide-parent">
     <div class = "slide-bg-right"></div>
+    <img src="/ref/ArrowRight.svg" class="arrow right">
+    <img src="/ref/ArrowLeft.svg" class="arrow left">
     <div class="image-slide">
         <div class="slide-bg-gradient"></div>
         <div class="slide-bg-left"></div>
@@ -102,17 +104,29 @@
 </div>
 
 <div class="main-panel second">
+    <h4>Overview</h4>
     <p>
-        Overview<br>
         An atmospheric 3D strategy game casting players as a lighthouse keeper navigating ships through dangerous waters, delivering fish to  surrounding islands, and uncovering mysterious creatures lurking in dark  depths.<br>
-        
-        <br>
-        Social Links<br>
-        <br><br><br>
-        
-        Implemented Features<br>
-        Ship Navigation System<br>
     </p>
+    <h4>Social Links</h4>
+    <div class="socials-wrapper">
+        <div class="socials">
+            <a href="https://www.example.com/">
+                <img src="/ref/Logos/GitHub_Invertocat_White_Spaced.svg" alt="Github Logo">
+                <p>Github</p>
+            </a>
+            <a href="https://www.example.com/">
+                <img src="/ref/Logos/ArtStation-logomark-white.svg" alt="Artstation Logo">
+                <p>Artstation</p>
+            </a>
+            <a href="https://www.example.com/">
+                <img src="/ref/Logos/itchio-logo-textless-white_spaced.svg" alt="Itch.io Logo">
+                <p>Itch.io</p>
+            </a>
+        </div>
+    </div>
+    <h4>Implemented Features</h4>
+    <p class="subheader">Ship Navigation System</p>
     <ul>
         <li>Developed a comprehensive route planning system supporting diverse mission types including fishing and cargo delivery</li>
         <li>Enabled route modification through adding, deleting and inserting tasks</li>
@@ -120,18 +134,14 @@
         <li>Designed internal path smoothing algorithms to produce natural, believable ship movement</li>
         <li>Integrated visual feedback for route visualization and ship status indication</li>
     </ul>
-    <p>
-        Enemies and Obstacles<br>
-    </p>
+    <p class="subheader">Enemies and Obstacles</p>
     <ul>
         <li>Built three distinct enemy AI variants with unique behavioral  patterns capable of interfering with ship navigation or ship inventory</li>
         <li>Developed a probability based spawning system that adjusts enemy and obstacle placement to ensure balanced density while  preventing overlap</li>
         <li>Created a tagging system that allows users to mark and track discovered enemies and obstacles throughout the level</li>
     </ul>
-    <p>
-        <br>
-        Visual Contributions<br>
-    </p>
+
+    <h4>Visual Contributions</h4>
     <ul>
         <li>Authored a custom water shader featuring a paper art aesthetic with mapline overlays,  stepped depth mapping (driven by terrain for artist friendly  adjustments), and multi-directional current flows without  visible blending artifacts.</li>
         <li>Designed a conditional visibility shader where enemies remain hidden outside the  lighthouse spotlight but appear red when marked by the player.</li>
