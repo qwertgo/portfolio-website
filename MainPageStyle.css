@@ -541,7 +541,7 @@ h4{
     max-width: 100%;
     min-width: 100%;
     box-sizing: border-box;
-    overflow-x: auto;
+    overflow-x: visible;
     overflow-y: hidden;
 
     scroll-behavior: smooth;
@@ -552,7 +552,6 @@ h4{
 .image-slide::-webkit-scrollbar {
   display: none;
 }
-
 
 .slide-bg-gradient{
     position: absolute;
@@ -581,7 +580,7 @@ h4{
     background-color: var(--bgColorMid);
     position: absolute;
     top: 0;
-    left: 0;
+    left: -50px;
     height: 100%;
     width: calc(50vw + var(--h) / 2 - 1px);
     z-index: -2;

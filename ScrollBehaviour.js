@@ -3,7 +3,7 @@ projectContent.addEventListener('wheel', (e) => {
     const slider = hoveredEl ? hoveredEl.closest('.image-slide') : null;
     if (!slider) return;
 
-    const maxScrollLeft = updateImageArrowsOpacity();
+    const maxScrollLeft = GetMaxScrollLeft();
 
     const atStart = slider.scrollLeft <= 0;
     const atEnd = slider.scrollLeft >= maxScrollLeft;
