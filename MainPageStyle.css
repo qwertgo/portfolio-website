@@ -495,6 +495,25 @@ h4{
     right: auto;
 }
 
+.slide-parent .arrow.left:hover, .slide-parent .arrow.right:hover{
+    background-color: inherit;
+    /* transition: .2s ease; */
+    transform: inherit;
+}
+
+.slide-parent .arrow.right{
+    transform: inherit;
+}
+
+.slide-parent .arrow.left{
+    transform: inherit;
+}
+
+.slide-parent .arrow.left:active, .slide-parent .arrow.right:active{
+    background-color: inherit;
+    border-color:inherit;
+}
+
 @keyframes right-arrow{
     from{
         right: var(--imageArrowMarginMin);
@@ -593,7 +612,7 @@ h4{
 
 .main-panel.second{
     text-align: left;
-    --infoTextMargin: calc(var(--defaultMargin) * .25);
+    --infoTextMargin: calc(var(--defaultMargin) * .4);
 }
 
 .main-panel ul{
@@ -602,7 +621,7 @@ h4{
 }
 
 .second h4{
-    margin-bottom: var(--infoTextMargin);;
+    margin-bottom: calc(var(--defaultMargin) * .15);
 }
 
 .second p{
@@ -648,7 +667,7 @@ h4{
     cursor: pointer;
     transition: .2s;
     transform: translateY(-5px);
-    filter: drop-shadow(0 10px 2pxrgb(0 0 0 / var(--cardShadowOpacity)));
+    filter: drop-shadow(0 10px 2px rgb(0 0 0 / var(--cardShadowOpacity)));
 }
 
 .socials a img{
@@ -750,35 +769,40 @@ footer a:hover, .impressum a:hover{
 
     /* Quick Facts */
     .quick-facts{
-        height: 266px;
+        height: 240px;
+        justify-content: space-around;
     }
 
     .quick-facts .fact{
-        width: 220px;
-        height: 108px;
+        width: 210px;
+        height: 100px;
         border-radius: 12px;
     }
 
     .quick-facts .fact img{
         top: 15px;
-        width: 90px;
-        height: 90px;
+        width: 80px;
+        height: 80px;
     }
 
     .quick-facts .number{
-        font-size: 33pt;
-        top: 18px;
+        font-size: 29pt;
+        top: 16px;
     }
 
     .quick-facts .spec{
-        font-size: 12.5pt;
-        bottom: 19.5px;
+        font-size: 11pt;
+        bottom: 17px;
     }
 
     /* Personal Contribution */
     .percentage-bar{
         height: 14px;
         border-radius: 7px;
+    }
+
+    .percentage-stats{
+        justify-content: space-around;
     }
 
     .percentage-stats .fact{
@@ -837,6 +861,10 @@ footer a:hover, .impressum a:hover{
 
         --bgGradientHeight: 380px;
         --bgGradientOffset: 550px;
+
+        --mainPanelWidth: 1000px;
+        --imageArrowMarginMin: 20px;
+        --imageArrowMarginMax: 35px;
     }
 
     header {
@@ -865,6 +893,64 @@ footer a:hover, .impressum a:hover{
     .card.active p {
         font-size: 30pt;
         bottom: 12%;
+    }
+
+    .quick-facts{
+        width: inherit;
+        height: inherit;
+    }
+
+    /* Personal Contribution */
+    .percentage-bar{
+        height: 18px;
+        border-radius: 9px;
+    }
+
+    .percentage-stats{
+        margin-top: calc(var(--defaultMargin) * .75);
+    }
+
+    .percentage-stats .fact{
+        width: 180px;
+        height: 83px;
+        border-radius: 7.5px;
+    }
+
+    .percentage-stats img{
+        width: 70px;
+        height: 70px;
+    }
+
+    .percentage-stats .number{
+        bottom: 35px;
+        left: 58%;
+    }
+
+    .percentage-stats .spec{
+        bottom: 17px;
+    }
+
+    /* Image Slide */
+    .slide-parent{
+        --h: 450px;
+    }
+
+    .project-images{
+        --imgMargin: 40px;
+    }
+
+    .slide-parent .arrow{
+        width: 60px;
+        height: 60px;
+    }
+
+    /* Info Text */
+    .main-panel.second{
+        --infoTextMargin: calc(var(--defaultMargin) * .35);
+    }
+
+    .socials-wrapper{
+        height: 125px;
     }
 }
 
