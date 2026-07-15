@@ -33,6 +33,8 @@
     --arrowTranslate: 0;
     --bgGradientHeight: 180px;
     --bgGradientOffset: 400px;
+
+    --defaultMargin: 40px;
 }
 
 /* #region fonts */
@@ -268,17 +270,12 @@ h3{
     font-size: 32pt;
     color: #C9E7DF;
     filter: drop-shadow(0px 7px 0px rgb(0 0 0 / var(--cardShadowOpacity)));
-    margin-bottom: 35px;
+    margin-bottom: var(--defaultMargin);
 }
 
 .main-panel{
     width: var(--mainPanelWidth);
-    margin: 0 auto;
-}
-
-.main-panel.second{
-    text-align: left;
-    margin-top: 25px;
+    margin: 0 auto var(--defaultMargin) auto;
 }
 /* #region Quick Facts */
 
@@ -289,6 +286,7 @@ h3{
     flex-wrap: wrap;
     width: 100%;
     height: 180px;
+    margin-bottom: var(--defaultMargin);
 }
 
 .quick-facts .fact{
@@ -367,17 +365,15 @@ h3{
 h4{
     font-weight: 500;
     font-size: 16pt;
-    margin-top: 50px;
 }
 
 .percentage-bar{
     height: 12px;
-    /* background-color: black; */
     border-radius: 6px;
     overflow: hidden;
     display: flex;
     justify-content: stretch;
-    margin-top: 25px;
+    margin-top: calc(var(--defaultMargin) * .5);
 }
 
 .programming-bar{
@@ -409,7 +405,7 @@ h4{
 /* #endregion */
 
 .percentage-stats{
-    margin-top: 23px;
+    margin-top: calc(var(--defaultMargin) * .5);
     display: flex;
     justify-content: space-between;
     pointer-events: none;
@@ -459,7 +455,7 @@ h4{
     --h: 230px;
     position: relative;
     height: var(--h);
-    margin-top: 35px;
+    margin-bottom: var(--defaultMargin);
 }
 
 .slide-bg-right{
@@ -574,11 +570,11 @@ h4{
 
 .project-images{
     --imgMargin: 25px;
-    margin: var(--imgMargin) 25px;
+    margin: var(--imgMargin) var(--imgMargin);
     height: calc(100% - var(--imgMargin) * 2);
     display: flex;
     align-items: center;
-    gap:10px;
+    gap: calc(var(--imgMargin) * .5);
     width: max-content;
     white-space: nowrap;
 }
@@ -594,14 +590,41 @@ h4{
 /* #endregion */
 
 /* #region Info Text  */
+
+.main-panel.second{
+    text-align: left;
+    --infoTextMargin: calc(var(--defaultMargin) * .25);
+}
+
+.main-panel ul{
+    margin-bottom: var(--infoTextMargin);
+    padding-left: 18px;
+}
+
+.second h4{
+    margin-bottom: var(--infoTextMargin);;
+}
+
+.second p{
+    margin-bottom: calc(var(--defaultMargin) * .125);
+}
+
+#larger-margin{
+    margin-bottom: var(--infoTextMargin);;
+}
+
+.subheader{
+    font-weight: 500;
+    font-style: italic;
+}
+
 .socials-wrapper{
     height: 80px;
     width: 100vw;
     --mainPanelLeftMargin: calc((100vw - var(--mainPanelWidth)) * -0.5);
     margin-left: var(--mainPanelLeftMargin);
     background-color: var(--bgColorMid);
-    margin-top:10px;
-    margin-bottom: 25px;
+    margin-bottom: var(--infoTextMargin);
 }
 
 .socials{
@@ -618,14 +641,14 @@ h4{
     transition: .2s;
     height: 100%;
     aspect-ratio: 1 / 1;
-    filter: drop-shadow(0 5px rgb(0 0 0 / var(--cardShadowOpacity)));
+    filter: drop-shadow(0 5px 1px rgb(0 0 0 / var(--cardShadowOpacity)));
 }
 
 .socials a:hover{
     cursor: pointer;
     transition: .2s;
     transform: translateY(-5px);
-    filter: drop-shadow(0 10px rgb(0 0 0 / var(--cardShadowOpacity)));
+    filter: drop-shadow(0 10px 2pxrgb(0 0 0 / var(--cardShadowOpacity)));
 }
 
 .socials a img{
@@ -646,26 +669,6 @@ h4{
     color: inherit;
     width: 100%;
 }
-
-.main-panel ul{
-    margin-bottom: 20px;
-    padding-left: 18px;
-}
-
-.second h4{
-    margin-bottom: 4px;
-    margin-top: 10px;
-}
-
-.second p{
-    margin-bottom: 4px;
-}
-
-.subheader{
-    font-weight: 500;
-    font-style: italic;
-}
-
 /* #endregion */
 
 /* #endregion */
@@ -675,11 +678,7 @@ h4{
 {
     text-align: center;
     color: white;
-    margin-bottom: 50px;
-}
-
-.impressum{
-    margin-top: 50px;
+    margin-bottom: var(--defaultMargin);
 }
 
 .impressum p {
@@ -717,7 +716,9 @@ footer a:hover, .impressum a:hover{
         --bgGradientHeight: 280px;
         --bgGradientOffset: 475px;
 
-        --mainPanelWidth: 600px;
+        --mainPanelWidth: 580px;
+
+        --defaultMargin: 60px;
     }
 
     h1{
@@ -733,6 +734,10 @@ footer a:hover, .impressum a:hover{
         filter: drop-shadow(0px 7.5px 0px rgb(0 0 0 / var(--cardShadowOpacity)));
     }
 
+    h4{
+        font-size: 24pt;
+    }
+
     .card p {
         font-size: 11pt;
         bottom: 12%;
@@ -743,11 +748,80 @@ footer a:hover, .impressum a:hover{
         bottom: 12%;
     }
 
-    /* .quick-facts .fact{
-        width: 140px;
-        height: 72px;
-        border-radius: 8px;
-    } */
+    /* Quick Facts */
+    .quick-facts{
+        height: 266px;
+    }
+
+    .quick-facts .fact{
+        width: 220px;
+        height: 108px;
+        border-radius: 12px;
+    }
+
+    .quick-facts .fact img{
+        top: 15px;
+        width: 90px;
+        height: 90px;
+    }
+
+    .quick-facts .number{
+        font-size: 33pt;
+        top: 18px;
+    }
+
+    .quick-facts .spec{
+        font-size: 12.5pt;
+        bottom: 19.5px;
+    }
+
+    /* Personal Contribution */
+    .percentage-bar{
+        height: 14px;
+        border-radius: 7px;
+    }
+
+    .percentage-stats .fact{
+        width: 135px;
+        height: 62px;
+        border-radius: 7.5px;
+    }
+
+    .percentage-stats img{
+        width: 60px;
+        height: 60px;
+        left: 12px;
+        top: 12px;
+    }
+
+    .percentage-stats .number{
+        font-size: 21pt;
+        bottom: 25px;
+    }
+
+    .percentage-stats .spec{
+        font-size: 9.25pt;
+        bottom: 9px;
+    }
+
+    /* Image Slide */
+    .slide-parent{
+        --h: 345px;
+    }
+
+    .project-images{
+        --imgMargin: 37.5px;
+    }
+
+    .slide-parent .arrow{
+        width: 45px;
+        height: 45px;
+    }
+
+    /* Info Text */
+    .socials-wrapper{
+        height: 100px;
+    }
 }
 
 @media (min-width: 1025px){
