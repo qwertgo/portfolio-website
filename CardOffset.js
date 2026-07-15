@@ -13,6 +13,7 @@ const originalContent = cardTrack.innerHTML;
 cardTrack.innerHTML += originalContent + originalContent;
 const allCards = document.querySelectorAll(".card");
 
+let imageSlide;
 let cardIndex = 0;
 
 //remove cards added by script
@@ -105,6 +106,8 @@ async function loadProjectContent(arrayIndex)
 
         projectContent.innerHTML = '';
         projectContent.innerHTML = htmlData;
+
+        imageSlide = projectContent.querySelector(".image-slide");
     }
     catch(error)
     {
@@ -112,6 +115,33 @@ async function loadProjectContent(arrayIndex)
         projectContent.innerHTML = `<p style="color:red;">Error loading content: ${error.message}</p>`;
     }
 }
+
+//Image Slide
+function updateImageArrowsOpacity()
+{
+    if(imageSlide == null)
+        return 0;
+
+    const maxScrollLeft = imageSlide.scrollWidth - imageSlide.clientWidth;
+    if (maxScrollLeft <= 0)
+    {
+        projectContent.style.setProperty("--rightImageArrowOpacity", 0);
+        projectContent.style.setProperty("--leftImageArrowOpacity", 0);
+    }
+    else
+    {
+        const scrollPercentage = imageSlide.scrollLeft / maxScrollLeft;
+    
+        const opacityRight = scrollPercentage < .7 ? 0.5 : 0;
+        const opacityLeft = scrollPercentage > .3 ? 0.5 : 0;
+        projectContent.style.setProperty("--rightImageArrowOpacity", opacityRight);
+        projectContent.style.setProperty("--leftImageArrowOpacity", opacityLeft);
+    }
+
+    return maxScrollLeft;
+}
+
+
 
 rightBtn.addEventListener("click", () => {
     const prevCardIndex = cardIndex;
@@ -134,6 +164,7 @@ leftBtn.addEventListener("click", () => {
 addEventListener("resize", () => {
     fetchCardVariables();
     updateCardPositioning(cardToArrayIndex(cardIndex), true);
+    updateImageArrowsOpacity();
 });
 
 let cardAddition = 0;
