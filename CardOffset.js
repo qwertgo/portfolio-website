@@ -13,6 +13,7 @@ const originalContent = cardTrack.innerHTML;
 cardTrack.innerHTML += originalContent + originalContent;
 const allCards = document.querySelectorAll(".card");
 
+let imageSlide;
 let cardIndex = 0;
 
 //remove cards added by script
@@ -26,6 +27,8 @@ let cardSpacing;
 let activeCardSpacing;
 let singleCardOffset;
 let evenBaseCardOffset;
+
+cardIndex = Math.floor((cardCount + (hasEvenCardCount ? -1 : 0)) / 2.0);
 
 //remap index to reflect the index of the card in the array
 function cardToArrayIndex(index)
@@ -103,8 +106,16 @@ async function loadProjectContent(arrayIndex)
         
         const htmlData = await response.text();
 
+        if(imageSlide != null)
+            imageSlide.removeEventListener('scroll', updateImageArrowsOpacity);
+
         projectContent.innerHTML = '';
         projectContent.innerHTML = htmlData;
+
+        imageSlide = projectContent.querySelector(".image-slide");
+
+        if(imageSlide != null)
+            imageSlide.addEventListener('scroll', updateImageArrowsOpacity);
     }
     catch(error)
     {
@@ -112,6 +123,35 @@ async function loadProjectContent(arrayIndex)
         projectContent.innerHTML = `<p style="color:red;">Error loading content: ${error.message}</p>`;
     }
 }
+
+//Image Slide
+function GetMaxScrollLeft()
+{
+    return imageSlide == null ? 0 : imageSlide.scrollWidth - imageSlide.clientWidth;
+}
+
+function updateImageArrowsOpacity()
+{
+    if(imageSlide == null)
+        return;
+
+    const maxScrollLeft = GetMaxScrollLeft();
+    if (maxScrollLeft <= 0)
+    {
+        projectContent.style.setProperty("--rightImageArrowOpacity", 0);
+        projectContent.style.setProperty("--leftImageArrowOpacity", 0);
+        return;
+    }
+
+    const scrollPercentage = imageSlide.scrollLeft / maxScrollLeft;
+
+    const opacityRight = scrollPercentage < .7 ? 0.5 : 0;
+    const opacityLeft = scrollPercentage > .3 ? 0.5 : 0;
+    projectContent.style.setProperty("--rightImageArrowOpacity", opacityRight);
+    projectContent.style.setProperty("--leftImageArrowOpacity", opacityLeft);
+}
+
+
 
 rightBtn.addEventListener("click", () => {
     const prevCardIndex = cardIndex;
@@ -134,13 +174,8 @@ leftBtn.addEventListener("click", () => {
 addEventListener("resize", () => {
     fetchCardVariables();
     updateCardPositioning(cardToArrayIndex(cardIndex), true);
+    updateImageArrowsOpacity();
 });
-
-let cardAddition = 0;
-if(hasEvenCardCount)
-    cardAddition = -1;
-
-cardIndex = Math.floor((cardCount + cardAddition) / 2.0);
 
 fetchCardVariables();
 updateCardSelection(0);
