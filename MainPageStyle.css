@@ -452,6 +452,8 @@ h4{
 
 .info-text{
     text-align: left;
+
+    --text-indentation: 2%;
 }
 
 img.info-video{
@@ -464,18 +466,26 @@ img.info-video{
     margin-bottom: 0;
 }
 
-ul{
-    margin-bottom: calc(var(--defaultMargin) * .15);
-    margin-left: calc(18px + 2%);
-}
-
-.info-text h4{
-    margin-bottom: calc(var(--defaultMargin) * .15);
+ul, #larger-margin{
+    margin-bottom: calc(var(--defaultMargin) * .3);
 }
 
 .info-text p{
     margin-bottom: calc(var(--defaultMargin) * .125);
-    margin-left: 2%;
+    /* margin-left: var(--text-indentation); */
+}
+
+ul{
+    margin-left: calc(18px + var(--text-indentation));
+}
+
+
+li{
+    margin-bottom: calc(var(--defaultMargin) * .07)
+}
+
+.info-text h4{
+    margin-bottom: calc(var(--defaultMargin) * .15);
 }
 
 .subheader{
@@ -499,14 +509,14 @@ ul{
     display: flex;
     justify-content: space-around;
     align-content: space-between;
-    position:relative;
 }
 
 .socials a{
     transition: .2s;
     height: 100%;
     aspect-ratio: 1 / 1;
-    filter: drop-shadow(0 5px 1px rgb(0 0 0 / var(--cardShadowOpacity)));
+    position:relative;
+    /* filter: drop-shadow(0 5px 1px rgb(0 0 0 / var(--cardShadowOpacity))); */
 }
 
 .socials a:hover{
@@ -758,16 +768,12 @@ footer a:hover, .impressum a:hover{
     }
 
     /* Info Text */
-    .main-panel.second{
-        --infoTextMargin: calc(var(--defaultMargin) * .35);
+    .info-text{
+        --text-indentation: 2%;
     }
 
     .socials-wrapper{
         height: 125px;
-    }
-
-    ul{
-        width: 80%;
     }
 
     .info-text p{
