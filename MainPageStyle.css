@@ -108,6 +108,11 @@ body{
     mask-size: auto 100%;
 }
 
+* #impressum{
+    --bgGradientHeight: 70px;
+    --bgGradientOffset: 200px;
+}
+
 .background-upper{
     background-color: var(--bgColorTop);
     position: absolute;
@@ -556,6 +561,10 @@ li{
     margin-bottom: var(--defaultMargin);
 }
 
+.impressum{
+    margin-top: 50px;
+}
+
 a{
     text-decoration: inherit;
     color: inherit;
@@ -778,6 +787,16 @@ footer a:hover, .impressum a:hover{
 
     .info-text p{
         width: 80%;
+    }
+
+    /* Impressum */
+    * #impressum{
+        --bgGradientHeight: 150px;
+        --bgGradientOffset: 240px;
+    }
+
+    .impressum{
+        margin-top: 120px;
     }
 }
 
