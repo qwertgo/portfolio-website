@@ -580,7 +580,6 @@ h4{
     background-color: var(--bgColorMid);
     position: absolute;
     top: 0;
-    left: -50px;
     height: 100%;
     width: calc(50vw + var(--h) / 2 - 1px);
     z-index: -2;
