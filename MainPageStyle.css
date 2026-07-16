@@ -19,12 +19,6 @@
 
     --mainPanelWidth: 325px;
 
-    /* Image Slide Arrows */
-    --imageArrowMarginMin: 10px;
-    --imageArrowMarginMax: 20px;
-    --rightImageArrowOpacity: .5;
-    --leftImageArrowOpacity: 0;
-
     /* background */
     --bgColorTop:#4B565E;
     --bgColorBottom: #282930;
@@ -362,6 +356,10 @@ h3{
 
 /* #region Personal Contribution */
 
+.contribution{
+    margin-bottom: var(--defaultMargin);
+}
+
 h4{
     font-weight: 500;
     font-size: 16pt;
@@ -450,185 +448,34 @@ h4{
 
 /* #endregion */
 
-/* #region Image Slide */
-.slide-parent{
-    --h: 230px;
-    position: relative;
-    height: var(--h);
-    margin-bottom: var(--defaultMargin);
-}
-
-.slide-bg-right{
-    background-color: var(--bgColorTop);
-    position: absolute;
-    left:0;
-    top:0;
-    overflow-x: auto;
-    width: 100%;
-    height: 100%;
-    z-index: -5;
-}
-
-.slide-parent .arrow{
-    width: 30px;
-    height: 30px;
-    border-radius: 0;
-    border-style: none;
-    background-color: inherit;
-    transform: translateY(-50%);
-    
-    animation-duration: .7s;
-    animation-direction: alternate;
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: infinite;
-}
-
-.slide-parent .arrow.right{
-    opacity: var(--rightImageArrowOpacity);
-    animation-name: right-arrow;
-    left: auto;
-}
-
-.slide-parent .arrow.left{
-    opacity: var(--leftImageArrowOpacity);
-    animation-name: left-arrow;
-    right: auto;
-}
-
-.slide-parent .arrow.left:hover, .slide-parent .arrow.right:hover{
-    background-color: inherit;
-    /* transition: .2s ease; */
-    transform: inherit;
-}
-
-.slide-parent .arrow.right{
-    transform: inherit;
-}
-
-.slide-parent .arrow.left{
-    transform: inherit;
-}
-
-.slide-parent .arrow.left:active, .slide-parent .arrow.right:active{
-    background-color: inherit;
-    border-color:inherit;
-}
-
-@keyframes right-arrow{
-    from{
-        right: var(--imageArrowMarginMin);
-    }
-
-    to{
-        right: var(--imageArrowMarginMax);
-    }
-}
-
-@keyframes left-arrow{
-    from{
-        left: var(--imageArrowMarginMin);
-    }
-
-    to{
-        left: var(--imageArrowMarginMax);
-    }
-}
-
-.image-slide{
-    height: var(--h);
-    position: relative;
-    display: inline-block;
-    max-width: 100%;
-    min-width: 100%;
-    box-sizing: border-box;
-    overflow-x: visible;
-    overflow-y: hidden;
-
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-}
-
-.image-slide::-webkit-scrollbar {
-  display: none;
-}
-
-.slide-bg-gradient{
-    position: absolute;
-    top: 0;
-    height: 100%;
-    aspect-ratio: 1 / 1;
-    left: 50vw;
-    transform: translateX(-50%);
-    background-color: var(--bgColorTop);
-    z-index: -1;
-
-    -webkit-mask-image: url("ref/Gradients/Dotted.webp");
-    mask-image: url(ref/Gradients/Dotted.webp);
-    
-    -webkit-mask-mode: alpha;
-    mask-mode: alpha;
-
-    -webkit-mask-position: left top;
-    mask-position: left top;
-
-    -webkit-mask-size: auto 100%;
-    mask-size: auto 100%;
-}
-
-.slide-bg-left{
-    background-color: var(--bgColorMid);
-    position: absolute;
-    top: 0;
-    left: -50px;
-    height: 100%;
-    width: calc(50vw + var(--h) / 2 - 1px);
-    z-index: -2;
-}
-
-.project-images{
-    --imgMargin: 25px;
-    margin: var(--imgMargin) var(--imgMargin);
-    height: calc(100% - var(--imgMargin) * 2);
-    display: flex;
-    align-items: center;
-    gap: calc(var(--imgMargin) * .5);
-    width: max-content;
-    white-space: nowrap;
-}
-
-.project-images img{
-    height: 100%;
-    width: auto;
-    flex-shrink: 0;
-    display: block;
-}
-
-
-/* #endregion */
-
 /* #region Info Text  */
 
-.main-panel.second{
+.info-text{
     text-align: left;
-    --infoTextMargin: calc(var(--defaultMargin) * .4);
 }
 
-.main-panel ul{
-    margin-bottom: var(--infoTextMargin);
-    padding-left: 18px;
+img.info-video{
+    width: 100%;
+    height: auto;
+    margin-bottom: calc(var(--defaultMargin) * .4);
 }
 
-.second h4{
+#remove-margin{
+    margin-bottom: 0;
+}
+
+ul{
+    margin-bottom: calc(var(--defaultMargin) * .15);
+    margin-left: calc(18px + 2%);
+}
+
+.info-text h4{
     margin-bottom: calc(var(--defaultMargin) * .15);
 }
 
-.second p{
+.info-text p{
     margin-bottom: calc(var(--defaultMargin) * .125);
-}
-
-#larger-margin{
-    margin-bottom: var(--infoTextMargin);;
+    margin-left: 2%;
 }
 
 .subheader{
@@ -642,7 +489,7 @@ h4{
     --mainPanelLeftMargin: calc((100vw - var(--mainPanelWidth)) * -0.5);
     margin-left: var(--mainPanelLeftMargin);
     background-color: var(--bgColorMid);
-    margin-bottom: var(--infoTextMargin);
+    margin-bottom: calc(var(--defaultMargin) * .4);
 }
 
 .socials{
@@ -824,20 +671,6 @@ footer a:hover, .impressum a:hover{
         bottom: 9px;
     }
 
-    /* Image Slide */
-    .slide-parent{
-        --h: 345px;
-    }
-
-    .project-images{
-        --imgMargin: 37.5px;
-    }
-
-    .slide-parent .arrow{
-        width: 45px;
-        height: 45px;
-    }
-
     /* Info Text */
     .socials-wrapper{
         height: 100px;
@@ -859,8 +692,6 @@ footer a:hover, .impressum a:hover{
         --bgGradientOffset: 550px;
 
         --mainPanelWidth: 1000px;
-        --imageArrowMarginMin: 20px;
-        --imageArrowMarginMax: 35px;
     }
 
     header {
@@ -926,20 +757,6 @@ footer a:hover, .impressum a:hover{
         bottom: 17px;
     }
 
-    /* Image Slide */
-    .slide-parent{
-        --h: 400px;
-    }
-
-    .project-images{
-        --imgMargin: 40px;
-    }
-
-    .slide-parent .arrow{
-        width: 50px;
-        height: 50px;
-    }
-
     /* Info Text */
     .main-panel.second{
         --infoTextMargin: calc(var(--defaultMargin) * .35);
@@ -947,6 +764,14 @@ footer a:hover, .impressum a:hover{
 
     .socials-wrapper{
         height: 125px;
+    }
+
+    ul{
+        width: 80%;
+    }
+
+    .info-text p{
+        width: 80%;
     }
 }
 
@@ -964,8 +789,6 @@ footer a:hover, .impressum a:hover{
         --bgGradientOffset: 850px;
 
         --mainPanelWidth: 2500px;
-        --imageArrowMarginMin: 30px;
-        --imageArrowMarginMax: 50px;
 
         --defaultMargin: 110px;
     }
@@ -1064,20 +887,6 @@ footer a:hover, .impressum a:hover{
     .percentage-stats .spec{
         font-size: 22pt;
         bottom: 28px;
-    }
-
-    /* Image Slide */
-    .slide-parent{
-        --h: 750px;
-    }
-
-    .project-images{
-        --imgMargin: 60px;
-    }
-
-    .slide-parent .arrow{
-        width: 90px;
-        height: 90px;
     }
 
     /* Info Text */
