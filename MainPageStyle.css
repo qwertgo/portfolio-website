@@ -1,24 +1,27 @@
 :root{
     /* cards */
-    --cardWidth: 90px;
-    --cardHeight: 126px;
+    --defaultCardWidth: 90px;
+    --defaultCardHeight: 126px;
+    --defaultDropShadowY: 12px;
+    --defaultDropShadowBlur: 2px;
+    --defaultFontSize: 8pt;
+    --defaultBottom: 14%;
+
     --activeCardWidth: 150px;
     --activeCardHeight: 210px;
+    --activeDropShadowY: 30px;
+    --activeDropShadowBlur: 5px;
+    --activeFontSize: 15pt;
+    --activeBottom: 13%;
 
     --cardBaseXOffset: 30px;
     --cardEaseXOffset: 80px;
-    --maxYOffset: 20px;
-    
-    --cardSelectionTopMargin: 140px;
-    --cardSpacing: 20px;
-    --activeCardSpacing: 60px;
     
     --cardShadowOpacity: .6;
     --cardTrackHeightAddition: 40px;
 
+    --defaultMargin: 40px;
     --buttonMargin: 20px;
-    --cardIndex: 0;
-
     --mainPanelWidth: 325px;
 
     /* background */
@@ -30,7 +33,6 @@
     --bgGradientHeight: 180px;
     --bgGradientOffset: 400px;
 
-    --defaultMargin: 40px;
 }
 
 /* #region fonts */
@@ -163,13 +165,23 @@ h2 {
     overflow-x: hidden;
 }
 
+ @property --left{
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 0px;
+}
 
 .card{
     --display: none;
     --visibility: hidden;
-    --left: 0;
     --zIndex: 0;
     --rotation: 0;
+    --cardWidth: 0;
+    --cardHeight: 0;
+    --dropShadowY: 0;
+    --dropShadowBlur: 0;
+    --fontSize: 0;
+    --bottom:0;
 
     width: var(--cardWidth);
     min-width: var(--cardWidth);;
@@ -184,41 +196,26 @@ h2 {
     transform: translate(-50%, -50%) rotate(var(--rotation));
 }
 
-.card.active{
-    --left: 50%;
-    width: var(--activeCardWidth);
-    min-width: var(--activeCardWidth);
-    height: var(--activeCardHeight);
-}
-
 .card img {
     border-radius: 5%;
     height: 100%;
     width: 100%;;
-    filter: drop-shadow(0px 12px 2px rgb(0 0 0 / var(--cardShadowOpacity)));
-}
-
-.card.active img {
-    filter: drop-shadow(0px 30px 5px rgb(0 0 0 / var(--cardShadowOpacity)));
+    filter: drop-shadow(0px var(--dropShadowY) var(--dropShadowBlur)
+     rgb(0 0 0 / var(--cardShadowOpacity)));
 }
 
 .card p {
     font-family: 'BigBoy', Helvetica, sans-serif;
     letter-spacing: 10%;
-    font-size: 8pt;
+    font-size: var(--fontSize);
     text-align: center;
     color: #f0f0f0;
 
     position: relative;
-    bottom: 14%;
+    bottom: var(--bottom);
     left: 50%;
     transform: translate(-50%, -50% );
     z-index: 1;
-}
-
-.card.active p {
-    font-size: 15pt;
-    bottom: 13%;
 }
 
 #Ecospire p, #MajorTom p {
@@ -600,24 +597,25 @@ footer a:hover, .impressum a:hover{
 
 @media (min-width: 640px) {
     :root{
-        --cardWidth: 135px;
-        --cardHeight: 189px;
+        --defaultCardWidth: 135px;
+        --defaultCardHeight: 189px;
+        --defaultFontSize: 11pt;
+        --defaultBottom: 12%;
+
         --activeCardWidth: 225px;
         --activeCardHeight: 315px;
+        --activeFontSize: 22.5pt;
+        --activeBottom: 12%;
 
         --cardBaseXOffset: 45px;
         --cardEaseXOffset: 120px;
 
-        --cardSpacing: 20px;
-        --activeCardSpacing: 60px;
+        --defaultMargin: 60px;
         --buttonMargin: 20px;
+        --mainPanelWidth: 580px;
 
         --bgGradientHeight: 280px;
         --bgGradientOffset: 475px;
-
-        --mainPanelWidth: 580px;
-
-        --defaultMargin: 60px;
     }
 
     h1{
@@ -635,16 +633,6 @@ footer a:hover, .impressum a:hover{
 
     h4{
         font-size: 24pt;
-    }
-
-    .card p {
-        font-size: 11pt;
-        bottom: 12%;
-    }
-
-    .card.active p {
-        font-size: 22.5pt;
-        bottom: 12%;
     }
 
     /* Quick Facts */
@@ -716,22 +704,22 @@ footer a:hover, .impressum a:hover{
 
 @media (min-width: 1025px){
     :root{
-        --cardWidth: 180px;
-        --cardHeight: 252px;
+        --defaultCardWidth: 180px;
+        --defaultCardHeight: 252px;
+        --defaultFontSize: 14pt;
+
         --activeCardWidth: 300px;
         --activeCardHeight: 420px;
+        --activeFontSize: 30pt;
 
         --cardBaseXOffset: 80px;
         --cardEaseXOffset: 180px;
 
-        --cardSpacing: 80px;
-        --activeCardSpacing: 180px;
+        --mainPanelWidth: 1000px;
         --buttonMargin: 40px;
 
         --bgGradientHeight: 380px;
         --bgGradientOffset: 550px;
-
-        --mainPanelWidth: 1000px;
     }
 
     header {
@@ -750,16 +738,6 @@ footer a:hover, .impressum a:hover{
     h3{
         font-size: 48pt;
         filter: drop-shadow(0px 10px 0px rgb(0 0 0 / var(--cardShadowOpacity)));
-    }
-
-    .card p {
-        font-size: 14pt;
-        bottom: 12%;
-    }
-
-    .card.active p {
-        font-size: 30pt;
-        bottom: 12%;
     }
 
     .quick-facts{
@@ -823,23 +801,25 @@ footer a:hover, .impressum a:hover{
 
 @media (min-width: 3000px){
     :root{
-        --cardWidth: 360px;
-        --cardHeight: 504px;
+        --defaultCardWidth: 360px;
+        --defaultCardHeight: 504px;
+        --defaultFontSize: 30pt;
+        --defaultBottom: 11%;
+
         --activeCardWidth: 600px;
         --activeCardHeight: 840px;
+        --activeFontSize: 60pt;
+        --activeBottom: 10.5%;
 
         --cardBaseXOffset: 160px;
         --cardEaseXOffset: 320px;
 
-        --cardSpacing: 120px;
-        --activeCardSpacing: 300px;
+        --defaultMargin: 110px;
         --buttonMargin: 50px;
-        --bgGradientHeight: 600px;
-        --bgGradientOffset: 850px;
-
         --mainPanelWidth: 2500px;
 
-        --defaultMargin: 110px;
+        --bgGradientHeight: 600px;
+        --bgGradientOffset: 850px;
     }
 
     .arrow{
@@ -868,16 +848,6 @@ footer a:hover, .impressum a:hover{
     
     h4{
         font-size: 50pt;
-    }
-
-    .card p {
-        font-size: 30pt;
-        bottom: 11%;
-    }
-
-    .card.active p {
-        font-size: 60pt;
-        bottom: 10.5%;
     }
 
     /* Quick Facts */

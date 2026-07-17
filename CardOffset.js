@@ -14,16 +14,36 @@ const peekCardCount = 2;
 let cardIndex = 0;
 
 //css variables
-let cardWidth;
+let defaultCardWidth;
+let defaultCardHeight;
+let defaultDropShadowY;
+let defaultDropShadowBlur;
+let defaultFontSize;
+let defaultBottom;
+
 let activeCardWidth;
-let cardSpacing;
-let activeCardSpacing;
-let singleCardOffset;
-let evenBaseCardOffset;
+let activeCardHeight;
+let activeDropShadowY;
+let activeDropShadowBlur;
+let activeFontSize;
+let activeBottom;
+
 let cardBaseXOffset;
 let cardEaseXOffset;
 
+let oldVariables = new Map();
+
 cardIndex = Math.floor((cardCount + (hasEvenCardCount ? -1 : 0)) / 2.0);
+
+class CardVariables 
+{
+    constructor(left, cardWidth, cardHeight)
+    {
+        this.left = left;
+        this.cardWidth = cardWidth;
+        this.cardHeight = cardHeight;
+    }
+}
 
 //remap index to reflect the index of the card in the array
 function cardToArrayIndex(index)
@@ -33,15 +53,22 @@ function cardToArrayIndex(index)
 
 function fetchCardVariables()
 {
-    cardWidth = parseFloat(style.getPropertyValue("--cardWidth"));
+    defaultCardWidth = parseFloat(style.getPropertyValue("--defaultCardWidth"));
+    defaultCardHeight = parseFloat(style.getPropertyValue("--defaultCardHeight"));
+    defaultDropShadowY = parseFloat(style.getPropertyValue("--defaultDropShadowY"));
+    defaultDropShadowBlur = parseFloat(style.getPropertyValue("--defaultDropShadowBlur"));
+    defaultFontSize = parseFloat(style.getPropertyValue("--defaultFontSize"));
+    defaultBottom = parseFloat(style.getPropertyValue("--defaultBottom"));
+
     activeCardWidth = parseFloat(style.getPropertyValue("--activeCardWidth"));
-    cardSpacing = parseFloat(style.getPropertyValue("--cardSpacing"));
-    activeCardSpacing = parseFloat(style.getPropertyValue("--activeCardSpacing"));
+    activeCardHeight = parseFloat(style.getPropertyValue("--activeCardHeight"));
+    activeDropShadowY = parseFloat(style.getPropertyValue("--activeDropShadowY"));
+    activeDropShadowBlur = parseFloat(style.getPropertyValue("--activeDropShadowBlur"));
+    activeFontSize = parseFloat(style.getPropertyValue("--activeFontSize"));
+    activeBottom = parseFloat(style.getPropertyValue("--activeBottom"));
+
     cardBaseXOffset = parseFloat(style.getPropertyValue("--cardBaseXOffset"));
     cardEaseXOffset = parseFloat(style.getPropertyValue("--cardEaseXOffset"));
-
-    singleCardOffset = cardWidth + cardSpacing;
-    evenBaseCardOffset = singleCardOffset * .5;
 }
 
 function updateCardSelection(prevCardIndex)
@@ -57,11 +84,12 @@ function updateCardVisuals(arrayIndex)
 {
     const halfScreenWidth = window.innerWidth * .5;
     const random = new alea('portfolio');
+    const trackStyle = getComputedStyle(cardTrack);
 
     for(let i = 0; i < allCards.length; i++)
     {
         const [distance, direction] = getDistanceAndDirection(i, arrayIndex);
-        updateCssVariables(i, distance, direction, halfScreenWidth);
+        updateCssVariables(i, distance, direction, halfScreenWidth, trackStyle);
 
         //need to always get the random number so the rotation for each card stays the same
         const randomNumber = random();
@@ -98,7 +126,7 @@ function getDistanceAndDirection(i, arrayIndex)
     return [distance, direction]
 }
 
-function updateCssVariables(i, distance, direction, halfScreenWidth)
+function updateCssVariables(i, distance, direction, halfScreenWidth, trackStyle)
 {
     let display = "none";
     let visibility = "hidden";
@@ -108,38 +136,77 @@ function updateCssVariables(i, distance, direction, halfScreenWidth)
         display = "block";
         visibility = "visible";
         left = "auto";
-        let distancePercentage;
-        let leftFloat;
-        
-        switch(direction)
+        let cardWidth = activeCardWidth + "px";
+        let cardHeight = activeCardHeight + "px";
+        let dropShadowY = activeDropShadowY;
+        let dropShadowBlur = activeDropShadowBlur;
+        let fontSize = activeFontSize;
+        let bottom = activeBottom;
+
+        if(direction == 0)
         {
-            case 0:
-                allCards[i].classList.add("active");
-                left = "50%";
-                yOffset = 0;
-                break;
-            case -1:
+            left = halfScreenWidth + "px";
+            yOffset = 0;
+        }
+        else
+        {
+            let distancePercentage;
+            let leftFloat;
+            if(direction < 0)
+            {
                 distancePercentage = getDistancePercentage(distance);
                 leftFloat = halfScreenWidth - cardBaseXOffset - 
                     distancePercentage * cardEaseXOffset;
-                left = leftFloat + "px";
-                allCards[i].classList.remove("active");
-                break;
-            
-            case 1:
+            }
+            else
+            {
                 distancePercentage = getDistancePercentage(distance);
                 leftFloat = halfScreenWidth + cardBaseXOffset + 
                     distancePercentage * cardEaseXOffset;
-                left = leftFloat + "px";
-                allCards[i].classList.remove("active");
-                break;
+            }
 
-            default:
-                console.logerror("Non viable direction: " + direction);
+            cardWidth = defaultCardWidth + "px";
+            cardHeight = defaultCardHeight + "px";
+            dropShadowY = defaultDropShadowY;
+            dropShadowBlur = defaultDropShadowBlur;
+            fontSize = defaultFontSize;
+            bottom = defaultBottom;
+            left = leftFloat + "px";
         }
 
-        allCards[i].style.setProperty("--left", left);
-        allCards[i].style.setProperty("--zIndex", peekCardCount - distance);
+        let cardStyle = allCards[i].style;
+        cardStyle.setProperty("--zIndex", peekCardCount - distance);
+        
+        cardStyle.setProperty("--dropShadowY", dropShadowY + "px");
+        cardStyle.setProperty("--dropShadowBlur", dropShadowBlur + "px");
+        cardStyle.setProperty("--fontSize", fontSize + "pt");
+        cardStyle.setProperty("--bottom", bottom + "%");
+
+        if(oldVariables.has(i))
+        {
+            // console.log(oldLeft);
+            allCards[i].animate([
+                {
+                    "--left": oldVariables.get(i).left,
+                    "--cardWidth": oldVariables.get(i).cardWidth,
+                    "--cardHeight": oldVariables.get(i).cardHeight
+                },
+                {
+                    "--left": left,
+                    "--cardWidth": cardWidth,
+                    "--cardHeight": cardHeight
+                }
+            ], {duration: 500, easing: "ease", fill: "forwards"});
+        }
+        else
+        {
+            cardStyle.setProperty("--left", left);
+            cardStyle.setProperty("--cardWidth", cardWidth);
+            cardStyle.setProperty("--cardHeight", cardHeight);
+        }
+
+        oldVariables.set(i, new CardVariables(left, cardWidth, cardHeight));
+
     }
 
     allCards[i].style.setProperty("--display", display);
