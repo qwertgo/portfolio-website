@@ -9,7 +9,7 @@ const allCards = cardTrack.querySelectorAll(".card");
 const cardCount = allCards.length;
 const halfCardCount = Math.floor( cardCount / 2);
 const hasEvenCardCount = cardCount % 2 == 0;
-const peekCardCount = 3;
+const peekCardCount = 2;
 
 let cardIndex = 0;
 
@@ -20,8 +20,8 @@ let cardSpacing;
 let activeCardSpacing;
 let singleCardOffset;
 let evenBaseCardOffset;
-let maxDistanceFromCenter;
-let maxYOffset;
+let cardBaseXOffset;
+let cardEaseXOffset;
 
 cardIndex = Math.floor((cardCount + (hasEvenCardCount ? -1 : 0)) / 2.0);
 
@@ -37,8 +37,8 @@ function fetchCardVariables()
     activeCardWidth = parseFloat(style.getPropertyValue("--activeCardWidth"));
     cardSpacing = parseFloat(style.getPropertyValue("--cardSpacing"));
     activeCardSpacing = parseFloat(style.getPropertyValue("--activeCardSpacing"));
-    maxDistanceFromCenter = parseFloat(style.getPropertyValue("--maxDistanceFromCenter"));
-    maxYOffset = parseFloat(style.getPropertyValue("--maxYOffset"));
+    cardBaseXOffset = parseFloat(style.getPropertyValue("--cardBaseXOffset"));
+    cardEaseXOffset = parseFloat(style.getPropertyValue("--cardEaseXOffset"));
 
     singleCardOffset = cardWidth + cardSpacing;
     evenBaseCardOffset = singleCardOffset * .5;
@@ -102,8 +102,7 @@ function updateCssVariables(i, distance, direction, halfScreenWidth)
         visibility = "visible";
         left = "auto";
         let distancePercentage;
-        let distanceFromCenter;
-        let yOffset;
+        let leftFloat;
         
         switch(direction)
         {
@@ -114,17 +113,17 @@ function updateCssVariables(i, distance, direction, halfScreenWidth)
                 break;
             case -1:
                 distancePercentage = getDistancePercentage(distance);
-                distanceFromCenter = halfScreenWidth - distancePercentage * maxDistanceFromCenter;
-                left = distanceFromCenter + "px";
-                yOffset = (1 - distancePercentage) * maxYOffset;
+                leftFloat = halfScreenWidth - cardBaseXOffset - 
+                    distancePercentage * cardEaseXOffset;
+                left = leftFloat + "px";
                 allCards[i].classList.remove("active");
                 break;
             
             case 1:
                 distancePercentage = getDistancePercentage(distance);
-                distanceFromCenter = halfScreenWidth + distancePercentage * maxDistanceFromCenter;
-                left = distanceFromCenter + "px";
-                yOffset = (1 - distancePercentage) * maxYOffset;
+                leftFloat = halfScreenWidth + cardBaseXOffset + 
+                    distancePercentage * cardEaseXOffset;
+                left = leftFloat + "px";
                 allCards[i].classList.remove("active");
                 break;
 
@@ -132,7 +131,6 @@ function updateCssVariables(i, distance, direction, halfScreenWidth)
                 console.logerror("Non viable direction: " + direction);
         }
 
-        // allCards[i].style.setProperty("--yOffset", yOffset);
         allCards[i].style.setProperty("--left", left);
         allCards[i].style.setProperty("--zIndex", peekCardCount - distance);
     }

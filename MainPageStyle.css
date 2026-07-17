@@ -5,7 +5,8 @@
     --activeCardWidth: 150px;
     --activeCardHeight: 210px;
 
-    --maxDistanceFromCenter: 120px;
+    --cardBaseXOffset: 30px;
+    --cardEaseXOffset: 80px;
     --maxYOffset: 20px;
     
     --cardSelectionTopMargin: 140px;
@@ -604,6 +605,9 @@ footer a:hover, .impressum a:hover{
         --activeCardWidth: 225px;
         --activeCardHeight: 315px;
 
+        --cardBaseXOffset: 45px;
+        --cardEaseXOffset: 120px;
+
         --cardSpacing: 20px;
         --activeCardSpacing: 60px;
         --buttonMargin: 20px;
@@ -717,6 +721,9 @@ footer a:hover, .impressum a:hover{
         --activeCardWidth: 300px;
         --activeCardHeight: 420px;
 
+        --cardBaseXOffset: 80px;
+        --cardEaseXOffset: 160px;
+
         --cardSpacing: 80px;
         --activeCardSpacing: 180px;
         --buttonMargin: 40px;
@@ -820,6 +827,9 @@ footer a:hover, .impressum a:hover{
         --cardHeight: 504px;
         --activeCardWidth: 600px;
         --activeCardHeight: 840px;
+
+        --cardBaseXOffset: 160px;
+        --cardEaseXOffset: 320px;
 
         --cardSpacing: 120px;
         --activeCardSpacing: 300px;
