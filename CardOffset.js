@@ -9,6 +9,7 @@ const allCards = cardTrack.querySelectorAll(".card");
 const cardCount = allCards.length;
 const halfCardCount = Math.floor( cardCount / 2);
 const hasEvenCardCount = cardCount % 2 == 0;
+const peekCardCount = 3;
 
 let cardIndex = 0;
 
@@ -19,6 +20,8 @@ let cardSpacing;
 let activeCardSpacing;
 let singleCardOffset;
 let evenBaseCardOffset;
+let maxDistanceFromCenter;
+let maxYOffset;
 
 cardIndex = Math.floor((cardCount + (hasEvenCardCount ? -1 : 0)) / 2.0);
 
@@ -34,6 +37,8 @@ function fetchCardVariables()
     activeCardWidth = parseFloat(style.getPropertyValue("--activeCardWidth"));
     cardSpacing = parseFloat(style.getPropertyValue("--cardSpacing"));
     activeCardSpacing = parseFloat(style.getPropertyValue("--activeCardSpacing"));
+    maxDistanceFromCenter = parseFloat(style.getPropertyValue("--maxDistanceFromCenter"));
+    maxYOffset = parseFloat(style.getPropertyValue("--maxYOffset"));
 
     singleCardOffset = cardWidth + cardSpacing;
     evenBaseCardOffset = singleCardOffset * .5;
@@ -45,73 +50,102 @@ function updateCardSelection(prevCardIndex)
     const prevArrayIndex = cardToArrayIndex(prevCardIndex);
     const arrayIndex = cardToArrayIndex(cardIndex);
     loadProjectContent(arrayIndex);
-    updateCardVisibility(arrayIndex);
-    // updateCardPositioning(arrayIndex, false);
+    updateCardVisuals(arrayIndex);
 }
 
-function updateCardVisibility(arrayIndex)
+function updateCardVisuals(arrayIndex)
 {
+    const halfScreenWidth = window.innerWidth * .5;
     for(let i = 0; i < allCards.length; i++)
     {
-        const offsetIndex = i - arrayIndex;
-        const firstDistance = Math.abs(offsetIndex);
-        const secondDistance = Math.abs(offsetIndex - allCards.length);
-        const thirdDistance = Math.abs(offsetIndex + allCards.length);
-        let distance;
-        let direction = 0; //-1 left, 0 middle, 1 right;
-        
-        if(firstDistance < secondDistance && firstDistance < thirdDistance)
-        {
-            distance = firstDistance;
-            direction = Math.sign(offsetIndex);
-        }
-        else if(secondDistance < firstDistance && secondDistance < thirdDistance)
-        {
-            distance = secondDistance;
-            direction = -1;
-        }
-        else
-        {
-            distance = thirdDistance;
-            direction = 1;
-        }
-        
-        let display = "none";
-        let visibility = "hidden";
-
-        if(distance <= 1)
-        {
-            display = "block";
-            visibility = "visible";
-            left = "auto";
-            
-            switch(direction)
-            {
-                case 0:
-                    allCards[i].classList.add("active");
-                    left = "50%";
-                    break;
-                case -1:
-                    left = "25%";
-                    allCards[i].classList.remove("active");
-                    break;
-                
-                case 1:
-                    left = "75%";
-                    allCards[i].classList.remove("active");
-                    break;
-
-                default:
-                    console.logerror("Non viable direction: " + direction);
-            }
-
-            allCards[i].style.setProperty("--left", left);
-            allCards[i].style.setProperty("--zIndex", 1 - distance);
-        }
-
-        allCards[i].style.setProperty("--display", display);
-        allCards[i].style.setProperty("--visibility", visibility);
+        const [distance, direction] = getDistanceAndDirection(i, arrayIndex);
+        updateCssVariables(i, distance, direction, halfScreenWidth);
     }
+}
+
+function getDistanceAndDirection(i, arrayIndex)
+{
+    const offsetIndex = i - arrayIndex;
+    const firstDistance = Math.abs(offsetIndex);
+    const secondDistance = Math.abs(offsetIndex - allCards.length);
+    const thirdDistance = Math.abs(offsetIndex + allCards.length);
+    let distance;
+    let direction = 0; //-1 left, 0 middle, 1 right;
+    
+    if(firstDistance < secondDistance && firstDistance < thirdDistance)
+    {
+        distance = firstDistance;
+        direction = Math.sign(offsetIndex);
+    }
+    else if(secondDistance < firstDistance && secondDistance < thirdDistance)
+    {
+        distance = secondDistance;
+        direction = -1;
+    }
+    else
+    {
+        distance = thirdDistance;
+        direction = 1;
+    }
+
+    return [distance, direction]
+}
+
+function updateCssVariables(i, distance, direction, halfScreenWidth)
+{
+    let display = "none";
+    let visibility = "hidden";
+
+    if(distance <= peekCardCount)
+    {
+        display = "block";
+        visibility = "visible";
+        left = "auto";
+        let distancePercentage;
+        let distanceFromCenter;
+        let yOffset;
+        
+        switch(direction)
+        {
+            case 0:
+                allCards[i].classList.add("active");
+                left = "50%";
+                yOffset = 0;
+                break;
+            case -1:
+                distancePercentage = getDistancePercentage(distance);
+                distanceFromCenter = halfScreenWidth - distancePercentage * maxDistanceFromCenter;
+                left = distanceFromCenter + "px";
+                yOffset = (1 - distancePercentage) * maxYOffset;
+                allCards[i].classList.remove("active");
+                break;
+            
+            case 1:
+                distancePercentage = getDistancePercentage(distance);
+                distanceFromCenter = halfScreenWidth + distancePercentage * maxDistanceFromCenter;
+                left = distanceFromCenter + "px";
+                yOffset = (1 - distancePercentage) * maxYOffset;
+                allCards[i].classList.remove("active");
+                break;
+
+            default:
+                console.logerror("Non viable direction: " + direction);
+        }
+
+        // allCards[i].style.setProperty("--yOffset", yOffset);
+        allCards[i].style.setProperty("--left", left);
+        allCards[i].style.setProperty("--zIndex", peekCardCount - distance);
+    }
+
+    allCards[i].style.setProperty("--display", display);
+    allCards[i].style.setProperty("--visibility", visibility);
+}
+
+function getDistancePercentage(distance)
+{
+    const normalizedDistance = distance / peekCardCount;
+    const invertedNormDistance = 1 - normalizedDistance;
+    return 1 - invertedNormDistance * invertedNormDistance;
 }
         
 function animateCardOffset(newOffset, instant)
@@ -163,7 +197,7 @@ leftBtn.addEventListener("click", () => {
 
 addEventListener("resize", () => {
     fetchCardVariables();
-    updateCardPositioning(cardToArrayIndex(cardIndex), true);
+    updateCardVisuals(cardToArrayIndex(cardIndex));
 });
 
 fetchCardVariables();

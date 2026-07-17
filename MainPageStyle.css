@@ -4,6 +4,9 @@
     --cardHeight: 126px;
     --activeCardWidth: 150px;
     --activeCardHeight: 210px;
+
+    --maxDistanceFromCenter: 120px;
+    --maxYOffset: 20px;
     
     --cardSelectionTopMargin: 140px;
     --cardSpacing: 20px;
@@ -165,6 +168,7 @@ h2 {
     --visibility: hidden;
     --left: 0;
     --zIndex: 0;
+    --yOffset: 0;
 
     width: var(--cardWidth);
     min-width: var(--cardWidth);;
