@@ -5,20 +5,12 @@ const cardTrack = document.querySelector(".card-track");
 const projectContent = document.querySelector(".project-content");
 
 const style = getComputedStyle(cardTrack);
-const cardCount = cardTrack.querySelectorAll(":scope > .card").length;
+const allCards = cardTrack.querySelectorAll(".card");
+const cardCount = allCards.length;
 const halfCardCount = Math.floor( cardCount / 2);
 const hasEvenCardCount = cardCount % 2 == 0;
 
-const originalContent = cardTrack.innerHTML;
-cardTrack.innerHTML += originalContent + originalContent;
-const allCards = document.querySelectorAll(".card");
-
-let imageSlide;
 let cardIndex = 0;
-
-//remove cards added by script
-let selectableCards = Array.from(allCards);
-selectableCards = selectableCards.slice(cardCount, selectableCards.length - cardCount);
 
 //css variables
 let cardWidth;
@@ -52,39 +44,74 @@ function updateCardSelection(prevCardIndex)
     fetchCardVariables();
     const prevArrayIndex = cardToArrayIndex(prevCardIndex);
     const arrayIndex = cardToArrayIndex(cardIndex);
-    
-    selectableCards[prevArrayIndex].classList.remove("active");
-    selectableCards[arrayIndex].classList.add("active");
-    
-    updateCardPositioning(arrayIndex, false);
+    loadProjectContent(arrayIndex);
+    updateCardVisibility(arrayIndex);
+    // updateCardPositioning(arrayIndex, false);
 }
 
-function updateCardPositioning(arrayIndex, instant)
+function updateCardVisibility(arrayIndex)
 {
-    let cardOffsetIndex = arrayIndex - halfCardCount;
-    
-    if(!hasEvenCardCount && cardOffsetIndex == 0)
+    for(let i = 0; i < allCards.length; i++)
     {
-        animateCardOffset(0, instant);
-        loadProjectContent(arrayIndex);
-        return;
+        const offsetIndex = i - arrayIndex;
+        const firstDistance = Math.abs(offsetIndex);
+        const secondDistance = Math.abs(offsetIndex - allCards.length);
+        const thirdDistance = Math.abs(offsetIndex + allCards.length);
+        let distance;
+        let direction = 0; //-1 left, 0 middle, 1 right;
+        
+        if(firstDistance < secondDistance && firstDistance < thirdDistance)
+        {
+            distance = firstDistance;
+            direction = Math.sign(offsetIndex);
+        }
+        else if(secondDistance < firstDistance && secondDistance < thirdDistance)
+        {
+            distance = secondDistance;
+            direction = -1;
+        }
+        else
+        {
+            distance = thirdDistance;
+            direction = 1;
+        }
+        
+        let display = "none";
+        let visibility = "hidden";
+
+        if(distance <= 1)
+        {
+            display = "block";
+            visibility = "visible";
+            left = "auto";
+            
+            switch(direction)
+            {
+                case 0:
+                    allCards[i].classList.add("active");
+                    left = "50%";
+                    break;
+                case -1:
+                    left = "25%";
+                    allCards[i].classList.remove("active");
+                    break;
+                
+                case 1:
+                    left = "75%";
+                    allCards[i].classList.remove("active");
+                    break;
+
+                default:
+                    console.logerror("Non viable direction: " + direction);
+            }
+
+            allCards[i].style.setProperty("--left", left);
+            allCards[i].style.setProperty("--zIndex", 1 - distance);
+        }
+
+        allCards[i].style.setProperty("--display", display);
+        allCards[i].style.setProperty("--visibility", visibility);
     }
-    
-    let baseOffset;
-    if(hasEvenCardCount)
-    {
-        baseOffset = evenBaseCardOffset;
-        if(cardOffsetIndex >= 0)
-            cardOffsetIndex++;
-    }
-    else
-        baseOffset = singleCardOffset;
-    
-    const cardsOffset = singleCardOffset * (Math.max(Math.abs(cardOffsetIndex) - 1, 0));
-    const totalOffset = (baseOffset + cardsOffset) * -Math.sign(cardOffsetIndex);
-    
-    animateCardOffset(totalOffset, instant);
-    loadProjectContent(arrayIndex);
 }
         
 function animateCardOffset(newOffset, instant)
@@ -95,7 +122,7 @@ function animateCardOffset(newOffset, instant)
 //load page by id name
 async function loadProjectContent(arrayIndex)
 {
-    const contentName = selectableCards[arrayIndex].id;
+    const contentName = allCards[arrayIndex].id;
 
     try
     {
@@ -106,16 +133,8 @@ async function loadProjectContent(arrayIndex)
         
         const htmlData = await response.text();
 
-        if(imageSlide != null)
-            imageSlide.removeEventListener('scroll', updateImageArrowsOpacity);
-
         projectContent.innerHTML = '';
         projectContent.innerHTML = htmlData;
-
-        imageSlide = projectContent.querySelector(".image-slide");
-
-        if(imageSlide != null)
-            imageSlide.addEventListener('scroll', updateImageArrowsOpacity);
     }
     catch(error)
     {
@@ -123,35 +142,6 @@ async function loadProjectContent(arrayIndex)
         projectContent.innerHTML = `<p style="color:red;">Error loading content: ${error.message}</p>`;
     }
 }
-
-//Image Slide
-function GetMaxScrollLeft()
-{
-    return imageSlide == null ? 0 : imageSlide.scrollWidth - imageSlide.clientWidth;
-}
-
-function updateImageArrowsOpacity()
-{
-    if(imageSlide == null)
-        return;
-
-    const maxScrollLeft = GetMaxScrollLeft();
-    if (maxScrollLeft <= 0)
-    {
-        projectContent.style.setProperty("--rightImageArrowOpacity", 0);
-        projectContent.style.setProperty("--leftImageArrowOpacity", 0);
-        return;
-    }
-
-    const scrollPercentage = imageSlide.scrollLeft / maxScrollLeft;
-
-    const opacityRight = scrollPercentage < .7 ? 0.5 : 0;
-    const opacityLeft = scrollPercentage > .3 ? 0.5 : 0;
-    projectContent.style.setProperty("--rightImageArrowOpacity", opacityRight);
-    projectContent.style.setProperty("--leftImageArrowOpacity", opacityLeft);
-}
-
-
 
 rightBtn.addEventListener("click", () => {
     const prevCardIndex = cardIndex;
@@ -174,7 +164,6 @@ leftBtn.addEventListener("click", () => {
 addEventListener("resize", () => {
     fetchCardVariables();
     updateCardPositioning(cardToArrayIndex(cardIndex), true);
-    updateImageArrowsOpacity();
 });
 
 fetchCardVariables();

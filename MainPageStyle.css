@@ -15,8 +15,6 @@
     --buttonMargin: 20px;
     --cardIndex: 0;
 
-    --cardOffset: 0px;
-
     --mainPanelWidth: 325px;
 
     /* background */
@@ -150,30 +148,42 @@ h2 {
 .card-selection{
     --cardSelectionHeight: calc(var(--activeCardHeight) + calc(var(--cardTrackHeightAddition) * 2));
     height: var(--cardSelectionHeight);
-    position: relative;
     overflow: hidden;
+    position: relative;
     margin-top: calc(var(--cardTrackHeightAddition) * -1 + 35px);
 }
 
 .card-track{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    position: relative;
     height: 100%;
-    transform: translateX(var(--cardOffset));
-    transition: .3s;
+    overflow-x: hidden;
 }
 
+
 .card{
-    min-width: var(--cardWidth);
+    --display: none;
+    --visibility: hidden;
+    --left: 0;
+    --zIndex: 0;
+
+    width: var(--cardWidth);
+    min-width: var(--cardWidth);;
     height: var(--cardHeight);
-    margin: 0 calc(var(--cardSpacing) * .5);
+    display: var(--display);
+    visibility: var(--visibility);
+
+    position: absolute;
+    left: var(--left);
+    z-index: var(--zIndex);
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .card.active{
+    --left: 50%;
+    width: var(--activeCardWidth);
     min-width: var(--activeCardWidth);
     height: var(--activeCardHeight);
-    margin: auto calc(var(--activeCardSpacing) * .5);
 }
 
 .card img {
