@@ -1,22 +1,27 @@
 :root{
     /* cards */
-    --cardWidth: 90px;
-    --cardHeight: 126px;
+    --defaultCardWidth: 90px;
+    --defaultCardHeight: 126px;
+    --defaultDropShadowY: 12px;
+    --defaultDropShadowBlur: 2px;
+    --defaultFontSize: 8pt;
+    --defaultBottom: 14%;
+
     --activeCardWidth: 150px;
     --activeCardHeight: 210px;
-    
-    --cardSelectionTopMargin: 140px;
-    --cardSpacing: 20px;
-    --activeCardSpacing: 60px;
+    --activeDropShadowY: 30px;
+    --activeDropShadowBlur: 5px;
+    --activeFontSize: 15pt;
+    --activeBottom: 13%;
+
+    --cardBaseXOffset: 30px;
+    --cardEaseXOffset: 80px;
     
     --cardShadowOpacity: .6;
     --cardTrackHeightAddition: 40px;
 
+    --defaultMargin: 40px;
     --buttonMargin: 20px;
-    --cardIndex: 0;
-
-    --cardOffset: 0px;
-
     --mainPanelWidth: 325px;
 
     /* background */
@@ -28,7 +33,6 @@
     --bgGradientHeight: 180px;
     --bgGradientOffset: 400px;
 
-    --defaultMargin: 40px;
 }
 
 /* #region fonts */
@@ -108,6 +112,11 @@ body{
     mask-size: auto 100%;
 }
 
+* #impressum{
+    --bgGradientHeight: 70px;
+    --bgGradientOffset: 200px;
+}
+
 .background-upper{
     background-color: var(--bgColorTop);
     position: absolute;
@@ -145,60 +154,68 @@ h2 {
 .card-selection{
     --cardSelectionHeight: calc(var(--activeCardHeight) + calc(var(--cardTrackHeightAddition) * 2));
     height: var(--cardSelectionHeight);
-    position: relative;
     overflow: hidden;
+    position: relative;
     margin-top: calc(var(--cardTrackHeightAddition) * -1 + 35px);
 }
 
 .card-track{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    position: relative;
     height: 100%;
-    transform: translateX(var(--cardOffset));
-    transition: .3s;
+    overflow-x: hidden;
+}
+
+ @property --left{
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 0px;
 }
 
 .card{
-    min-width: var(--cardWidth);
-    height: var(--cardHeight);
-    margin: 0 calc(var(--cardSpacing) * .5);
-}
+    --display: none;
+    --visibility: hidden;
+    --zIndex: 0;
+    --rotation: 0;
+    --cardWidth: 0;
+    --cardHeight: 0;
+    --dropShadowY: 0;
+    --dropShadowBlur: 0;
+    --fontSize: 0;
+    --bottom:0;
 
-.card.active{
-    min-width: var(--activeCardWidth);
-    height: var(--activeCardHeight);
-    margin: auto calc(var(--activeCardSpacing) * .5);
+    width: var(--cardWidth);
+    min-width: var(--cardWidth);;
+    height: var(--cardHeight);
+    display: var(--display);
+    visibility: var(--visibility);
+
+    position: absolute;
+    left: var(--left);
+    z-index: var(--zIndex);
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(var(--rotation));
 }
 
 .card img {
     border-radius: 5%;
     height: 100%;
     width: 100%;;
-    filter: drop-shadow(0px 12px 2px rgb(0 0 0 / var(--cardShadowOpacity)));
-}
-
-.card.active img {
-    filter: drop-shadow(0px 30px 5px rgb(0 0 0 / var(--cardShadowOpacity)));
+    filter: drop-shadow(0px var(--dropShadowY) var(--dropShadowBlur)
+     rgb(0 0 0 / var(--cardShadowOpacity)));
 }
 
 .card p {
     font-family: 'BigBoy', Helvetica, sans-serif;
     letter-spacing: 10%;
-    font-size: 8pt;
+    font-size: var(--fontSize);
     text-align: center;
     color: #f0f0f0;
 
     position: relative;
-    bottom: 14%;
+    bottom: var(--bottom);
     left: 50%;
     transform: translate(-50%, -50% );
     z-index: 1;
-}
-
-.card.active p {
-    font-size: 15pt;
-    bottom: 13%;
 }
 
 #Ecospire p, #MajorTom p {
@@ -452,6 +469,8 @@ h4{
 
 .info-text{
     text-align: left;
+
+    --text-indentation: 2%;
 }
 
 img.info-video{
@@ -464,18 +483,26 @@ img.info-video{
     margin-bottom: 0;
 }
 
-ul{
-    margin-bottom: calc(var(--defaultMargin) * .15);
-    margin-left: calc(18px + 2%);
-}
-
-.info-text h4{
-    margin-bottom: calc(var(--defaultMargin) * .15);
+ul, #larger-margin{
+    margin-bottom: calc(var(--defaultMargin) * .3);
 }
 
 .info-text p{
     margin-bottom: calc(var(--defaultMargin) * .125);
-    margin-left: 2%;
+    /* margin-left: var(--text-indentation); */
+}
+
+ul{
+    margin-left: calc(18px + var(--text-indentation));
+}
+
+
+li{
+    margin-bottom: calc(var(--defaultMargin) * .07)
+}
+
+.info-text h4{
+    margin-bottom: calc(var(--defaultMargin) * .15);
 }
 
 .subheader{
@@ -499,14 +526,14 @@ ul{
     display: flex;
     justify-content: space-around;
     align-content: space-between;
-    position:relative;
 }
 
 .socials a{
     transition: .2s;
     height: 100%;
     aspect-ratio: 1 / 1;
-    filter: drop-shadow(0 5px 1px rgb(0 0 0 / var(--cardShadowOpacity)));
+    position:relative;
+    /* filter: drop-shadow(0 5px 1px rgb(0 0 0 / var(--cardShadowOpacity))); */
 }
 
 .socials a:hover{
@@ -546,6 +573,10 @@ ul{
     margin-bottom: var(--defaultMargin);
 }
 
+.impressum{
+    margin-top: 50px;
+}
+
 a{
     text-decoration: inherit;
     color: inherit;
@@ -566,21 +597,25 @@ footer a:hover, .impressum a:hover{
 
 @media (min-width: 640px) {
     :root{
-        --cardWidth: 135px;
-        --cardHeight: 189px;
+        --defaultCardWidth: 135px;
+        --defaultCardHeight: 189px;
+        --defaultFontSize: 11pt;
+        --defaultBottom: 12%;
+
         --activeCardWidth: 225px;
         --activeCardHeight: 315px;
+        --activeFontSize: 22.5pt;
+        --activeBottom: 12%;
 
-        --cardSpacing: 20px;
-        --activeCardSpacing: 60px;
+        --cardBaseXOffset: 45px;
+        --cardEaseXOffset: 120px;
+
+        --defaultMargin: 60px;
         --buttonMargin: 20px;
+        --mainPanelWidth: 580px;
 
         --bgGradientHeight: 280px;
         --bgGradientOffset: 475px;
-
-        --mainPanelWidth: 580px;
-
-        --defaultMargin: 60px;
     }
 
     h1{
@@ -598,16 +633,6 @@ footer a:hover, .impressum a:hover{
 
     h4{
         font-size: 24pt;
-    }
-
-    .card p {
-        font-size: 11pt;
-        bottom: 12%;
-    }
-
-    .card.active p {
-        font-size: 22.5pt;
-        bottom: 12%;
     }
 
     /* Quick Facts */
@@ -679,19 +704,22 @@ footer a:hover, .impressum a:hover{
 
 @media (min-width: 1025px){
     :root{
-        --cardWidth: 180px;
-        --cardHeight: 252px;
+        --defaultCardWidth: 180px;
+        --defaultCardHeight: 252px;
+        --defaultFontSize: 14pt;
+
         --activeCardWidth: 300px;
         --activeCardHeight: 420px;
+        --activeFontSize: 30pt;
 
-        --cardSpacing: 80px;
-        --activeCardSpacing: 180px;
+        --cardBaseXOffset: 80px;
+        --cardEaseXOffset: 180px;
+
+        --mainPanelWidth: 1000px;
         --buttonMargin: 40px;
 
         --bgGradientHeight: 380px;
         --bgGradientOffset: 550px;
-
-        --mainPanelWidth: 1000px;
     }
 
     header {
@@ -710,16 +738,6 @@ footer a:hover, .impressum a:hover{
     h3{
         font-size: 48pt;
         filter: drop-shadow(0px 10px 0px rgb(0 0 0 / var(--cardShadowOpacity)));
-    }
-
-    .card p {
-        font-size: 14pt;
-        bottom: 12%;
-    }
-
-    .card.active p {
-        font-size: 30pt;
-        bottom: 12%;
     }
 
     .quick-facts{
@@ -758,39 +776,50 @@ footer a:hover, .impressum a:hover{
     }
 
     /* Info Text */
-    .main-panel.second{
-        --infoTextMargin: calc(var(--defaultMargin) * .35);
+    .info-text{
+        --text-indentation: 2%;
     }
 
     .socials-wrapper{
         height: 125px;
     }
 
-    ul{
+    .info-text p{
         width: 80%;
     }
 
-    .info-text p{
-        width: 80%;
+    /* Impressum */
+    * #impressum{
+        --bgGradientHeight: 150px;
+        --bgGradientOffset: 240px;
+    }
+
+    .impressum{
+        margin-top: 120px;
     }
 }
 
 @media (min-width: 3000px){
     :root{
-        --cardWidth: 360px;
-        --cardHeight: 504px;
+        --defaultCardWidth: 360px;
+        --defaultCardHeight: 504px;
+        --defaultFontSize: 30pt;
+        --defaultBottom: 11%;
+
         --activeCardWidth: 600px;
         --activeCardHeight: 840px;
+        --activeFontSize: 60pt;
+        --activeBottom: 10.5%;
 
-        --cardSpacing: 120px;
-        --activeCardSpacing: 300px;
-        --buttonMargin: 50px;
-        --bgGradientHeight: 600px;
-        --bgGradientOffset: 850px;
-
-        --mainPanelWidth: 2500px;
+        --cardBaseXOffset: 160px;
+        --cardEaseXOffset: 320px;
 
         --defaultMargin: 110px;
+        --buttonMargin: 50px;
+        --mainPanelWidth: 2500px;
+
+        --bgGradientHeight: 600px;
+        --bgGradientOffset: 850px;
     }
 
     .arrow{
@@ -819,16 +848,6 @@ footer a:hover, .impressum a:hover{
     
     h4{
         font-size: 50pt;
-    }
-
-    .card p {
-        font-size: 30pt;
-        bottom: 11%;
-    }
-
-    .card.active p {
-        font-size: 60pt;
-        bottom: 10.5%;
     }
 
     /* Quick Facts */

@@ -5,30 +5,45 @@ const cardTrack = document.querySelector(".card-track");
 const projectContent = document.querySelector(".project-content");
 
 const style = getComputedStyle(cardTrack);
-const cardCount = cardTrack.querySelectorAll(":scope > .card").length;
+const allCards = cardTrack.querySelectorAll(".card");
+const cardCount = allCards.length;
 const halfCardCount = Math.floor( cardCount / 2);
 const hasEvenCardCount = cardCount % 2 == 0;
+const peekCardCount = 2;
 
-const originalContent = cardTrack.innerHTML;
-cardTrack.innerHTML += originalContent + originalContent;
-const allCards = document.querySelectorAll(".card");
-
-let imageSlide;
 let cardIndex = 0;
 
-//remove cards added by script
-let selectableCards = Array.from(allCards);
-selectableCards = selectableCards.slice(cardCount, selectableCards.length - cardCount);
-
 //css variables
-let cardWidth;
+let defaultCardWidth;
+let defaultCardHeight;
+let defaultDropShadowY;
+let defaultDropShadowBlur;
+let defaultFontSize;
+let defaultBottom;
+
 let activeCardWidth;
-let cardSpacing;
-let activeCardSpacing;
-let singleCardOffset;
-let evenBaseCardOffset;
+let activeCardHeight;
+let activeDropShadowY;
+let activeDropShadowBlur;
+let activeFontSize;
+let activeBottom;
+
+let cardBaseXOffset;
+let cardEaseXOffset;
+
+let oldVariables = new Map();
 
 cardIndex = Math.floor((cardCount + (hasEvenCardCount ? -1 : 0)) / 2.0);
+
+class CardVariables 
+{
+    constructor(left, cardWidth, cardHeight)
+    {
+        this.left = left;
+        this.cardWidth = cardWidth;
+        this.cardHeight = cardHeight;
+    }
+}
 
 //remap index to reflect the index of the card in the array
 function cardToArrayIndex(index)
@@ -38,13 +53,22 @@ function cardToArrayIndex(index)
 
 function fetchCardVariables()
 {
-    cardWidth = parseFloat(style.getPropertyValue("--cardWidth"));
-    activeCardWidth = parseFloat(style.getPropertyValue("--activeCardWidth"));
-    cardSpacing = parseFloat(style.getPropertyValue("--cardSpacing"));
-    activeCardSpacing = parseFloat(style.getPropertyValue("--activeCardSpacing"));
+    defaultCardWidth = parseFloat(style.getPropertyValue("--defaultCardWidth"));
+    defaultCardHeight = parseFloat(style.getPropertyValue("--defaultCardHeight"));
+    defaultDropShadowY = parseFloat(style.getPropertyValue("--defaultDropShadowY"));
+    defaultDropShadowBlur = parseFloat(style.getPropertyValue("--defaultDropShadowBlur"));
+    defaultFontSize = parseFloat(style.getPropertyValue("--defaultFontSize"));
+    defaultBottom = parseFloat(style.getPropertyValue("--defaultBottom"));
 
-    singleCardOffset = cardWidth + cardSpacing;
-    evenBaseCardOffset = singleCardOffset * .5;
+    activeCardWidth = parseFloat(style.getPropertyValue("--activeCardWidth"));
+    activeCardHeight = parseFloat(style.getPropertyValue("--activeCardHeight"));
+    activeDropShadowY = parseFloat(style.getPropertyValue("--activeDropShadowY"));
+    activeDropShadowBlur = parseFloat(style.getPropertyValue("--activeDropShadowBlur"));
+    activeFontSize = parseFloat(style.getPropertyValue("--activeFontSize"));
+    activeBottom = parseFloat(style.getPropertyValue("--activeBottom"));
+
+    cardBaseXOffset = parseFloat(style.getPropertyValue("--cardBaseXOffset"));
+    cardEaseXOffset = parseFloat(style.getPropertyValue("--cardEaseXOffset"));
 }
 
 function updateCardSelection(prevCardIndex)
@@ -52,39 +76,148 @@ function updateCardSelection(prevCardIndex)
     fetchCardVariables();
     const prevArrayIndex = cardToArrayIndex(prevCardIndex);
     const arrayIndex = cardToArrayIndex(cardIndex);
-    
-    selectableCards[prevArrayIndex].classList.remove("active");
-    selectableCards[arrayIndex].classList.add("active");
-    
-    updateCardPositioning(arrayIndex, false);
+    loadProjectContent(arrayIndex);
+    updateCardVisuals(arrayIndex);
 }
 
-function updateCardPositioning(arrayIndex, instant)
+function updateCardVisuals(arrayIndex)
 {
-    let cardOffsetIndex = arrayIndex - halfCardCount;
-    
-    if(!hasEvenCardCount && cardOffsetIndex == 0)
+    const halfScreenWidth = window.innerWidth * .5;
+    const random = new alea('portfolio');
+    const trackStyle = getComputedStyle(cardTrack);
+
+    for(let i = 0; i < allCards.length; i++)
     {
-        animateCardOffset(0, instant);
-        loadProjectContent(arrayIndex);
-        return;
+        const [distance, direction] = getDistanceAndDirection(i, arrayIndex);
+        updateCssVariables(i, distance, direction, halfScreenWidth, trackStyle);
+
+        //need to always get the random number so the rotation for each card stays the same
+        const randomNumber = random();
+        const rotation = i == arrayIndex ? 0 : (randomNumber - .5) * .1;
+        allCards[i].style.setProperty("--rotation", rotation + "turn");
     }
+}
+
+function getDistanceAndDirection(i, arrayIndex)
+{
+    const offsetIndex = i - arrayIndex;
+    const firstDistance = Math.abs(offsetIndex);
+    const secondDistance = Math.abs(offsetIndex - allCards.length);
+    const thirdDistance = Math.abs(offsetIndex + allCards.length);
+    let distance;
+    let direction = 0; //-1 left, 0 middle, 1 right;
     
-    let baseOffset;
-    if(hasEvenCardCount)
+    if(firstDistance < secondDistance && firstDistance < thirdDistance)
     {
-        baseOffset = evenBaseCardOffset;
-        if(cardOffsetIndex >= 0)
-            cardOffsetIndex++;
+        distance = firstDistance;
+        direction = Math.sign(offsetIndex);
+    }
+    else if(secondDistance < firstDistance && secondDistance < thirdDistance)
+    {
+        distance = secondDistance;
+        direction = -1;
     }
     else
-        baseOffset = singleCardOffset;
-    
-    const cardsOffset = singleCardOffset * (Math.max(Math.abs(cardOffsetIndex) - 1, 0));
-    const totalOffset = (baseOffset + cardsOffset) * -Math.sign(cardOffsetIndex);
-    
-    animateCardOffset(totalOffset, instant);
-    loadProjectContent(arrayIndex);
+    {
+        distance = thirdDistance;
+        direction = 1;
+    }
+
+    return [distance, direction]
+}
+
+function updateCssVariables(i, distance, direction, halfScreenWidth, trackStyle)
+{
+    let display = "none";
+    let visibility = "hidden";
+
+    if(distance <= peekCardCount)
+    {
+        display = "block";
+        visibility = "visible";
+        left = "auto";
+        let cardWidth = activeCardWidth + "px";
+        let cardHeight = activeCardHeight + "px";
+        let dropShadowY = activeDropShadowY;
+        let dropShadowBlur = activeDropShadowBlur;
+        let fontSize = activeFontSize;
+        let bottom = activeBottom;
+
+        if(direction == 0)
+        {
+            left = halfScreenWidth + "px";
+            yOffset = 0;
+        }
+        else
+        {
+            let distancePercentage;
+            let leftFloat;
+            if(direction < 0)
+            {
+                distancePercentage = getDistancePercentage(distance);
+                leftFloat = halfScreenWidth - cardBaseXOffset - 
+                    distancePercentage * cardEaseXOffset;
+            }
+            else
+            {
+                distancePercentage = getDistancePercentage(distance);
+                leftFloat = halfScreenWidth + cardBaseXOffset + 
+                    distancePercentage * cardEaseXOffset;
+            }
+
+            cardWidth = defaultCardWidth + "px";
+            cardHeight = defaultCardHeight + "px";
+            dropShadowY = defaultDropShadowY;
+            dropShadowBlur = defaultDropShadowBlur;
+            fontSize = defaultFontSize;
+            bottom = defaultBottom;
+            left = leftFloat + "px";
+        }
+
+        let cardStyle = allCards[i].style;
+        cardStyle.setProperty("--zIndex", peekCardCount - distance);
+        
+        cardStyle.setProperty("--dropShadowY", dropShadowY + "px");
+        cardStyle.setProperty("--dropShadowBlur", dropShadowBlur + "px");
+        cardStyle.setProperty("--fontSize", fontSize + "pt");
+        cardStyle.setProperty("--bottom", bottom + "%");
+
+        if(oldVariables.has(i))
+        {
+            // console.log(oldLeft);
+            allCards[i].animate([
+                {
+                    "--left": oldVariables.get(i).left,
+                    "--cardWidth": oldVariables.get(i).cardWidth,
+                    "--cardHeight": oldVariables.get(i).cardHeight
+                },
+                {
+                    "--left": left,
+                    "--cardWidth": cardWidth,
+                    "--cardHeight": cardHeight
+                }
+            ], {duration: 500, easing: "ease", fill: "forwards"});
+        }
+        else
+        {
+            cardStyle.setProperty("--left", left);
+            cardStyle.setProperty("--cardWidth", cardWidth);
+            cardStyle.setProperty("--cardHeight", cardHeight);
+        }
+
+        oldVariables.set(i, new CardVariables(left, cardWidth, cardHeight));
+
+    }
+
+    allCards[i].style.setProperty("--display", display);
+    allCards[i].style.setProperty("--visibility", visibility);
+}
+
+function getDistancePercentage(distance)
+{
+    const normalizedDistance = distance / peekCardCount;
+    const invertedNormDistance = 1 - normalizedDistance;
+    return 1 - invertedNormDistance * invertedNormDistance;
 }
         
 function animateCardOffset(newOffset, instant)
@@ -95,7 +228,7 @@ function animateCardOffset(newOffset, instant)
 //load page by id name
 async function loadProjectContent(arrayIndex)
 {
-    const contentName = selectableCards[arrayIndex].id;
+    const contentName = allCards[arrayIndex].id;
 
     try
     {
@@ -106,16 +239,8 @@ async function loadProjectContent(arrayIndex)
         
         const htmlData = await response.text();
 
-        if(imageSlide != null)
-            imageSlide.removeEventListener('scroll', updateImageArrowsOpacity);
-
         projectContent.innerHTML = '';
         projectContent.innerHTML = htmlData;
-
-        imageSlide = projectContent.querySelector(".image-slide");
-
-        if(imageSlide != null)
-            imageSlide.addEventListener('scroll', updateImageArrowsOpacity);
     }
     catch(error)
     {
@@ -123,35 +248,6 @@ async function loadProjectContent(arrayIndex)
         projectContent.innerHTML = `<p style="color:red;">Error loading content: ${error.message}</p>`;
     }
 }
-
-//Image Slide
-function GetMaxScrollLeft()
-{
-    return imageSlide == null ? 0 : imageSlide.scrollWidth - imageSlide.clientWidth;
-}
-
-function updateImageArrowsOpacity()
-{
-    if(imageSlide == null)
-        return;
-
-    const maxScrollLeft = GetMaxScrollLeft();
-    if (maxScrollLeft <= 0)
-    {
-        projectContent.style.setProperty("--rightImageArrowOpacity", 0);
-        projectContent.style.setProperty("--leftImageArrowOpacity", 0);
-        return;
-    }
-
-    const scrollPercentage = imageSlide.scrollLeft / maxScrollLeft;
-
-    const opacityRight = scrollPercentage < .7 ? 0.5 : 0;
-    const opacityLeft = scrollPercentage > .3 ? 0.5 : 0;
-    projectContent.style.setProperty("--rightImageArrowOpacity", opacityRight);
-    projectContent.style.setProperty("--leftImageArrowOpacity", opacityLeft);
-}
-
-
 
 rightBtn.addEventListener("click", () => {
     const prevCardIndex = cardIndex;
@@ -173,8 +269,7 @@ leftBtn.addEventListener("click", () => {
 
 addEventListener("resize", () => {
     fetchCardVariables();
-    updateCardPositioning(cardToArrayIndex(cardIndex), true);
-    updateImageArrowsOpacity();
+    updateCardVisuals(cardToArrayIndex(cardIndex));
 });
 
 fetchCardVariables();
