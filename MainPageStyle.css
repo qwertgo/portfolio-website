@@ -169,7 +169,7 @@ h2 {
     --visibility: hidden;
     --left: 0;
     --zIndex: 0;
-    --yOffset: 0;
+    --rotation: 0;
 
     width: var(--cardWidth);
     min-width: var(--cardWidth);;
@@ -181,7 +181,7 @@ h2 {
     left: var(--left);
     z-index: var(--zIndex);
     top: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) rotate(var(--rotation));
 }
 
 .card.active{
@@ -722,7 +722,7 @@ footer a:hover, .impressum a:hover{
         --activeCardHeight: 420px;
 
         --cardBaseXOffset: 80px;
-        --cardEaseXOffset: 160px;
+        --cardEaseXOffset: 180px;
 
         --cardSpacing: 80px;
         --activeCardSpacing: 180px;

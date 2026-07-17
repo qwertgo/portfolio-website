@@ -56,10 +56,17 @@ function updateCardSelection(prevCardIndex)
 function updateCardVisuals(arrayIndex)
 {
     const halfScreenWidth = window.innerWidth * .5;
+    const random = new alea('portfolio');
+
     for(let i = 0; i < allCards.length; i++)
     {
         const [distance, direction] = getDistanceAndDirection(i, arrayIndex);
         updateCssVariables(i, distance, direction, halfScreenWidth);
+
+        //need to always get the random number so the rotation for each card stays the same
+        const randomNumber = random();
+        const rotation = i == arrayIndex ? 0 : (randomNumber - .5) * .1;
+        allCards[i].style.setProperty("--rotation", rotation + "turn");
     }
 }
 
