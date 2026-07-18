@@ -37,11 +37,12 @@ cardIndex = Math.floor((cardCount + (hasEvenCardCount ? -1 : 0)) / 2.0);
 
 class CardVariables 
 {
-    constructor(left, cardWidth, cardHeight)
+    constructor(left, cardWidth, cardHeight, rotation)
     {
         this.left = left;
         this.cardWidth = cardWidth;
         this.cardHeight = cardHeight;
+        this.rotation = rotation;
     }
 }
 
@@ -89,12 +90,11 @@ function updateCardVisuals(arrayIndex)
     for(let i = 0; i < allCards.length; i++)
     {
         const [distance, direction] = getDistanceAndDirection(i, arrayIndex);
-        updateCssVariables(i, distance, direction, halfScreenWidth, trackStyle);
-
         //need to always get the random number so the rotation for each card stays the same
         const randomNumber = random();
-        const rotation = i == arrayIndex ? 0 : (randomNumber - .5) * .1;
-        allCards[i].style.setProperty("--rotation", rotation + "turn");
+        let rotation = i == arrayIndex ? 0 : (randomNumber - .5) * .1;
+        rotation += "turn";
+        updateCssVariables(i, distance, direction, halfScreenWidth, trackStyle, rotation);
     }
 }
 
@@ -126,7 +126,7 @@ function getDistanceAndDirection(i, arrayIndex)
     return [distance, direction]
 }
 
-function updateCssVariables(i, distance, direction, halfScreenWidth, trackStyle)
+function updateCssVariables(i, distance, direction, halfScreenWidth, trackStyle, rotation)
 {
     let display = "none";
     let visibility = "hidden";
@@ -176,7 +176,6 @@ function updateCssVariables(i, distance, direction, halfScreenWidth, trackStyle)
 
         let cardStyle = allCards[i].style;
         cardStyle.setProperty("--zIndex", peekCardCount - distance);
-        
         cardStyle.setProperty("--dropShadowY", dropShadowY + "px");
         cardStyle.setProperty("--dropShadowBlur", dropShadowBlur + "px");
         cardStyle.setProperty("--fontSize", fontSize + "pt");
@@ -184,17 +183,18 @@ function updateCssVariables(i, distance, direction, halfScreenWidth, trackStyle)
 
         if(oldVariables.has(i))
         {
-            // console.log(oldLeft);
             allCards[i].animate([
                 {
                     "--left": oldVariables.get(i).left,
                     "--cardWidth": oldVariables.get(i).cardWidth,
-                    "--cardHeight": oldVariables.get(i).cardHeight
+                    "--cardHeight": oldVariables.get(i).cardHeight,
+                    "--rotation": oldVariables.get(i).rotation
                 },
                 {
                     "--left": left,
                     "--cardWidth": cardWidth,
-                    "--cardHeight": cardHeight
+                    "--cardHeight": cardHeight,
+                    "--rotation": rotation
                 }
             ], {duration: 500, easing: "ease", fill: "forwards"});
         }
@@ -203,9 +203,10 @@ function updateCssVariables(i, distance, direction, halfScreenWidth, trackStyle)
             cardStyle.setProperty("--left", left);
             cardStyle.setProperty("--cardWidth", cardWidth);
             cardStyle.setProperty("--cardHeight", cardHeight);
+            cardStyle.setProperty("--rotation", rotation);
         }
 
-        oldVariables.set(i, new CardVariables(left, cardWidth, cardHeight));
+        oldVariables.set(i, new CardVariables(left, cardWidth, cardHeight, rotation));
 
     }
 

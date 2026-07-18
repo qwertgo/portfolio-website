@@ -165,19 +165,34 @@ h2 {
     overflow-x: hidden;
 }
 
- @property --left{
+@property --left{
     syntax: '<length>';
     inherits: false;
-    initial-value: 0px;
+    initial-value: 0;
+}
+
+@property --cardWidth{
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 0;
+}
+
+@property --cardHeight{
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 0;
+}
+
+@property --rotation{
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0;
 }
 
 .card{
     --display: none;
     --visibility: hidden;
     --zIndex: 0;
-    --rotation: 0;
-    --cardWidth: 0;
-    --cardHeight: 0;
     --dropShadowY: 0;
     --dropShadowBlur: 0;
     --fontSize: 0;
