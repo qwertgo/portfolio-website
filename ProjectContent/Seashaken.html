@@ -55,11 +55,15 @@
 
     <div class="info-text">
         <h4>Overview</h4>
+        <video autoplay muted loop playsinline class="info-video">
+            <source src="ref/Seashaken/Header_1_mobile.mp4" media="(max-width: 639px)" type="video/mp4">
+            <source src="ref/Seashaken/Header_1_desktop.mp4" type="video/mp4">
+        </video>
+
         <p id="larger-margin">
             An atmospheric 3D strategy game casting players as a lighthouse keeper navigating ships through dangerous waters, delivering fish to  surrounding islands, and uncovering mysterious creatures lurking in dark  depths.<br>
         </p>
-        <img src="ref/Seashaken/1_wide_3840.webp" class="info-video" >
-
+        
         <h4>Project Links</h4>
         <div class="socials-wrapper">
             <div class="socials">
@@ -79,6 +83,11 @@
         </div>
         
         <h4>Implemented Features</h4>
+        <video autoplay muted loop playsinline class="info-video">
+            <source src="ref/Seashaken/Header_2_mobile.mp4" media="(max-width: 639px)" type="video/mp4">
+            <source src="ref/Seashaken/Header_2_desktop.mp4" type="video/mp4">
+        </video>
+        
         <p class="subheader">Ship Navigation System</p>
         <ul>
             <li>Developed a comprehensive route planning system supporting diverse mission types including fishing and cargo delivery</li>
@@ -94,17 +103,18 @@
             <li>Created a tagging system that allows users to mark and track discovered enemies and obstacles throughout the level</li>
         </ul>
         
-        <img src="ref/Seashaken/2_wide_3840.webp" class="info-video">
-        
         <h4>Visual Contributions</h4>
-        <ul>
+        <video autoplay muted loop playsinline class="info-video">
+            <source src="ref/Seashaken/Header_3_mobile.mp4" media="(max-width: 639px)" type="video/mp4">
+            <source src="ref/Seashaken/Header_3_desktop.mp4" type="video/mp4">
+        </video>
+
+        <ul  id="remove-margin">
             <li>Authored a custom water shader featuring a paper art aesthetic with mapline overlays,  stepped depth mapping (driven by terrain for artist friendly  adjustments), and multi-directional current flows without  visible blending artifacts</li>
             <li>Designed a conditional visibility shader where enemies remain hidden outside the  lighthouse spotlight but appear red when marked by the player</li>
             <li>Shaped Fog of War to fit into the map aesthetic, ensuring it harmonizes with the stylized water and environment</li>
             <li>Built an adjustable dotted line shader entirely for flexible path and boundary visualization</li>
             <li>All Shaders created using Unity Shader Graph sometimes accelerating them with custom hlsl code</li>
         </ul>
-        
-        <img src="ref/Seashaken/3_wide_3840.webp" class="info-video" id="remove-margin" >
     </div>
 </div>
