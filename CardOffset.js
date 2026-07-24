@@ -12,6 +12,7 @@ const hasEvenCardCount = cardCount % 2 == 0;
 const peekCardCount = 2;
 
 let cardIndex = 0;
+let cardFlowDirection;
 
 //css variables
 let defaultCardWidth;
@@ -31,7 +32,7 @@ let activeBottom;
 let cardBaseXOffset;
 let cardEaseXOffset;
 
-let oldVariables = new Map();
+let oldCardVariables = new Map();
 let halfScreenWidth = 0;
 
 cardIndex = Math.floor((cardCount + (hasEvenCardCount ? -1 : 0)) / 2.0);
@@ -98,7 +99,7 @@ function updateCardVisuals(arrayIndex)
         //need to always get the random number so the rotation for each card stays the same
         const randomNumber = random();
         let rotation = ((random() - .5) * .1) + "turn";
-        updateCssVariables(i, distance, direction, trackStyle, rotation);
+        initateCardAnimation(i, distance, direction, trackStyle, rotation);
     }
 }
 
@@ -130,7 +131,7 @@ function getDistanceAndDirection(i, arrayIndex)
     return [distance, direction]
 }
 
-function updateCssVariables(i, distance, direction, trackStyle, rotation)
+function initateCardAnimation(i, distance, direction, trackStyle, rotation)
 {
     let display = "none";
     let visibility = "hidden";
@@ -139,54 +140,69 @@ function updateCssVariables(i, distance, direction, trackStyle, rotation)
     {
         display = "block";
         visibility = "visible";
-        left = "auto";
-        let cardVariables = new CardVariables(
-            0,
-            defaultCardWidth,
-            defaultCardHeight,
-            rotation,
-            defaultFontSize,
-            defaultBottom,
-            defaultDropShadowY,
-            defaultDropShadowBlur
-        );
-
-        if(direction == 0)
-        {
-            cardVariables.left = halfScreenWidth + "px";
-            cardVariables.cardWidth = activeCardWidth;
-            cardVariables.cardHeight = activeCardHeight;
-            cardVariables.dropShadowY = activeDropShadowY;
-            cardVariables.dropShadowBlur = activeDropShadowBlur;
-            cardVariables.fontSize = activeFontSize;
-            cardVariables.bottom = activeBottom;
-            cardVariables.rotation = "0turn";
-        }
-        else
-        {
-            let distancePercentage;
-            let leftFloat;
-            if(direction < 0)
-            {
-                distancePercentage = getDistancePercentage(distance);
-                leftFloat = halfScreenWidth - cardBaseXOffset - 
-                    distancePercentage * cardEaseXOffset;
-            }
-            else
-            {
-                distancePercentage = getDistancePercentage(distance);
-                leftFloat = halfScreenWidth + cardBaseXOffset + 
-                    distancePercentage * cardEaseXOffset;
-            }
-
-            cardVariables.left = leftFloat + "px";
-        }
-
-        animateActiveCards(i, distance, cardVariables);
+        const cardVariables = getActiveCardVariables(i, distance, direction, rotation);
+        animateActiveCard(i, distance, cardVariables);
+    }
+    else if(distance == peekCardCount + 1 && direction == cardFlowDirection)
+    {
+        display = "block";
+        visibility = "visible";
+        animateDisappearingCard(i, rotation);
     }
 
     allCards[i].style.setProperty("--display", display);
     allCards[i].style.setProperty("--visibility", visibility);
+}
+
+function getActiveCardVariables(i, distance, direction, rotation)
+{
+    let cardVariables = new CardVariables(
+        0,
+        defaultCardWidth,
+        defaultCardHeight,
+        rotation,
+        defaultFontSize,
+        defaultBottom,
+        defaultDropShadowY,
+        defaultDropShadowBlur
+    );
+
+    if(direction == 0)
+    {
+        cardVariables.left = halfScreenWidth + "px";
+        cardVariables.cardWidth = activeCardWidth;
+        cardVariables.cardHeight = activeCardHeight;
+        cardVariables.dropShadowY = activeDropShadowY;
+        cardVariables.dropShadowBlur = activeDropShadowBlur;
+        cardVariables.fontSize = activeFontSize;
+        cardVariables.bottom = activeBottom;
+        cardVariables.rotation = "0turn";
+    }
+    else
+    {
+        cardVariables.left = getLeftPostition(distance, direction) + "px";
+
+        if(distance == peekCardCount && direction == cardFlowDirection * -1)
+            setAppearingCardVariables(i, rotation);
+    }
+
+    return cardVariables;
+}
+
+function getLeftPostition(distance, direction)
+{
+    let distancePercentage;
+    if(direction < 0)
+    {
+        distancePercentage = getDistancePercentage(distance);
+        return halfScreenWidth - cardBaseXOffset - 
+            distancePercentage * cardEaseXOffset;
+    }
+
+    distancePercentage = getDistancePercentage(distance);
+    return halfScreenWidth + cardBaseXOffset + 
+        distancePercentage * cardEaseXOffset;
+    
 }
 
 function getDistancePercentage(distance)
@@ -196,52 +212,111 @@ function getDistancePercentage(distance)
     return 1 - invertedNormDistance * invertedNormDistance;
 }
 
-function animateActiveCards(i, distance, cardVariables)
+function setAppearingCardVariables(i, rotation)
+{
+    if(oldCardVariables.has(i))
+    {
+        const oldV = oldCardVariables.get(i);
+        oldV.left = halfScreenWidth + "px";
+        oldV.cardWidth = "0px";
+        oldV.cardHeight = "0px";
+        oldV.fontSize = "0pt";
+    }
+    else
+    {
+        const oldV = new CardVariables(
+            halfScreenWidth + "px",
+            "0px",
+            "0px",
+            rotation,
+            "0pt",
+            defaultBottom,
+            defaultDropShadowY,
+            defaultDropShadowBlur
+        );
+
+        oldCardVariables.set(i, oldV);
+    }
+}
+
+function animateActiveCard(i, distance, cardVariables, rotation)
 {
     let cardStyle = allCards[i].style;
     cardStyle.setProperty("--zIndex", peekCardCount - distance);
 
-    if(oldVariables.has(i))
-    {
-        lastState = oldVariables.get(i);
-        allCards[i].animate([
-            {
-                "--left": lastState.left,
-                "--cardWidth": lastState.cardWidth,
-                "--cardHeight": lastState.cardHeight,
-                "--rotation": lastState.rotation,
-                "--fontSize": lastState.fontSize,
-                "--bottom": lastState.bottom,
-                "--dropShadowY": lastState.dropShadowY,
-                "--dropShadowBlur": lastState.dropShadowBlur,
-            },
-            {
-                "--left": cardVariables.left,
-                "--cardWidth": cardVariables.cardWidth,
-                "--cardHeight": cardVariables.cardHeight,
-                "--rotation": cardVariables.rotation,
-                "--fontSize": cardVariables.fontSize,
-                "--bottom": cardVariables.bottom,
-                "--dropShadowY": cardVariables.dropShadowY,
-                "--dropShadowBlur": cardVariables.dropShadowBlur,
-            }
-        ], {duration: 400, easing: "ease-in-out", fill: "forwards"});
-    }
+    if(oldCardVariables.has(i))
+        animateSingleCard(allCards[i], oldCardVariables.get(i), cardVariables);
     else
     {
-        cardStyle.setProperty("--left", cardVariables.left);
-        cardStyle.setProperty("--cardWidth", cardVariables.cardWidth);
-        cardStyle.setProperty("--cardHeight", cardVariables.cardHeight);
-        cardStyle.setProperty("--rotation", cardVariables.rotation);
-        cardStyle.setProperty("--fontSize", cardVariables.fontSize);
-        cardStyle.setProperty("--bottom", cardVariables.bottom);
-        cardStyle.setProperty("--dropShadowY", cardVariables.dropShadowY);
-        cardStyle.setProperty("--dropShadowBlur", cardVariables.dropShadowBlur);
+        const startCard = new CardVariables(
+            halfScreenWidth + "px",
+            "0px",
+            "0px",
+            rotation,
+            "0pt",
+            defaultBottom,
+            "0px",
+            "0px"
+        );
+        const duration = distance / peekCardCount * 200 + 400;
+        animateSingleCard(allCards[i], startCard, cardVariables, duration);
     }
 
-    oldVariables.set(i, cardVariables);
+    oldCardVariables.set(i, cardVariables);
 }
-        
+
+function animateSingleCard(card, from, to, duration = 400)
+{
+    return card.animate([
+        {
+            "--left": from.left,
+            "--cardWidth": from.cardWidth,
+            "--cardHeight": from.cardHeight,
+            "--rotation": from.rotation,
+            "--fontSize": from.fontSize,
+            "--bottom": from.bottom,
+            "--dropShadowY": from.dropShadowY,
+            "--dropShadowBlur": from.dropShadowBlur,
+        },
+        {
+            "--left": to.left,
+            "--cardWidth": to.cardWidth,
+            "--cardHeight": to.cardHeight,
+            "--rotation": to.rotation,
+            "--fontSize": to.fontSize,
+            "--bottom": to.bottom,
+            "--dropShadowY": to.dropShadowY,
+            "--dropShadowBlur": to.dropShadowBlur,
+        }
+    ], {duration: duration, easing: "ease-in-out", fill: "forwards"});
+}
+
+function animateDisappearingCard(i, rotation)
+{
+    cardStyle = allCards[i].style;
+    cardStyle.setProperty("--zIndex", -1);
+
+    const oldVariables = oldCardVariables.get(i);
+    const newValues = new CardVariables(
+        halfScreenWidth + "px",
+        "0px",
+        "0px",
+        rotation,
+        "0pt",
+        oldVariables.bottom,
+        oldVariables.dropShadowY,
+        oldVariables.dropShadowBlur
+    );
+
+    const animation = animateSingleCard(allCards[i], oldCardVariables.get(i), newValues);
+
+    animation.finished.then(() =>
+    {
+        cardStyle.setProperty("--display", "none");
+        cardStyle.setProperty("--visibility", "hidden");
+        cardStyle.setProperty("--zIndex", 0);
+    });
+}
 
 //load page by id name
 async function loadProjectContent(arrayIndex)
@@ -270,6 +345,7 @@ async function loadProjectContent(arrayIndex)
 rightBtn.addEventListener("click", () => {
     const prevCardIndex = cardIndex;
     cardIndex--;
+    cardFlowDirection = -1;
     
     if(cardIndex < 0)
         cardIndex = cardCount - 1;
@@ -281,6 +357,7 @@ leftBtn.addEventListener("click", () => {
     const prevCardIndex = cardIndex;
     cardIndex++;
     cardIndex %= cardCount;
+    cardFlowDirection = 1;
     
     updateCardSelection(prevCardIndex);
 });
