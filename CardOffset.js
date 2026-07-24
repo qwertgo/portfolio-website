@@ -32,17 +32,22 @@ let cardBaseXOffset;
 let cardEaseXOffset;
 
 let oldVariables = new Map();
+let halfScreenWidth = 0;
 
 cardIndex = Math.floor((cardCount + (hasEvenCardCount ? -1 : 0)) / 2.0);
 
 class CardVariables 
 {
-    constructor(left, cardWidth, cardHeight, rotation)
+    constructor(left, cardWidth, cardHeight, rotation, fontsize, bottom, dropShadowY, dropShadowBlur)
     {
         this.left = left;
         this.cardWidth = cardWidth;
         this.cardHeight = cardHeight;
         this.rotation = rotation;
+        this.fontSize = fontsize;
+        this.bottom = bottom;
+        this.dropShadowY = dropShadowY;
+        this.dropShadowBlur = dropShadowBlur;
     }
 }
 
@@ -54,19 +59,19 @@ function cardToArrayIndex(index)
 
 function fetchCardVariables()
 {
-    defaultCardWidth = parseFloat(style.getPropertyValue("--defaultCardWidth"));
-    defaultCardHeight = parseFloat(style.getPropertyValue("--defaultCardHeight"));
-    defaultDropShadowY = parseFloat(style.getPropertyValue("--defaultDropShadowY"));
-    defaultDropShadowBlur = parseFloat(style.getPropertyValue("--defaultDropShadowBlur"));
-    defaultFontSize = parseFloat(style.getPropertyValue("--defaultFontSize"));
-    defaultBottom = parseFloat(style.getPropertyValue("--defaultBottom"));
+    defaultCardWidth = parseFloat(style.getPropertyValue("--defaultCardWidth")) + "px";
+    defaultCardHeight = parseFloat(style.getPropertyValue("--defaultCardHeight")) + "px";
+    defaultDropShadowY = parseFloat(style.getPropertyValue("--defaultDropShadowY")) + "px";
+    defaultDropShadowBlur = parseFloat(style.getPropertyValue("--defaultDropShadowBlur")) + "px";
+    defaultFontSize = parseFloat(style.getPropertyValue("--defaultFontSize")) + "pt";
+    defaultBottom = parseFloat(style.getPropertyValue("--defaultBottom")) + "%";
 
-    activeCardWidth = parseFloat(style.getPropertyValue("--activeCardWidth"));
-    activeCardHeight = parseFloat(style.getPropertyValue("--activeCardHeight"));
-    activeDropShadowY = parseFloat(style.getPropertyValue("--activeDropShadowY"));
-    activeDropShadowBlur = parseFloat(style.getPropertyValue("--activeDropShadowBlur"));
-    activeFontSize = parseFloat(style.getPropertyValue("--activeFontSize"));
-    activeBottom = parseFloat(style.getPropertyValue("--activeBottom"));
+    activeCardWidth = parseFloat(style.getPropertyValue("--activeCardWidth")) + "px";
+    activeCardHeight = parseFloat(style.getPropertyValue("--activeCardHeight")) + "px";
+    activeDropShadowY = parseFloat(style.getPropertyValue("--activeDropShadowY")) + "px";
+    activeDropShadowBlur = parseFloat(style.getPropertyValue("--activeDropShadowBlur")) + "px";
+    activeFontSize = parseFloat(style.getPropertyValue("--activeFontSize")) + "pt";
+    activeBottom = parseFloat(style.getPropertyValue("--activeBottom")) + "%";
 
     cardBaseXOffset = parseFloat(style.getPropertyValue("--cardBaseXOffset"));
     cardEaseXOffset = parseFloat(style.getPropertyValue("--cardEaseXOffset"));
@@ -83,7 +88,7 @@ function updateCardSelection(prevCardIndex)
 
 function updateCardVisuals(arrayIndex)
 {
-    const halfScreenWidth = window.innerWidth * .5;
+    halfScreenWidth = window.innerWidth * .5;
     const random = new alea('portfolio');
     const trackStyle = getComputedStyle(cardTrack);
 
@@ -92,9 +97,8 @@ function updateCardVisuals(arrayIndex)
         const [distance, direction] = getDistanceAndDirection(i, arrayIndex);
         //need to always get the random number so the rotation for each card stays the same
         const randomNumber = random();
-        let rotation = i == arrayIndex ? 0 : (randomNumber - .5) * .1;
-        rotation += "turn";
-        updateCssVariables(i, distance, direction, halfScreenWidth, trackStyle, rotation);
+        let rotation = ((random() - .5) * .1) + "turn";
+        updateCssVariables(i, distance, direction, trackStyle, rotation);
     }
 }
 
@@ -126,7 +130,7 @@ function getDistanceAndDirection(i, arrayIndex)
     return [distance, direction]
 }
 
-function updateCssVariables(i, distance, direction, halfScreenWidth, trackStyle, rotation)
+function updateCssVariables(i, distance, direction, trackStyle, rotation)
 {
     let display = "none";
     let visibility = "hidden";
@@ -136,17 +140,27 @@ function updateCssVariables(i, distance, direction, halfScreenWidth, trackStyle,
         display = "block";
         visibility = "visible";
         left = "auto";
-        let cardWidth = activeCardWidth + "px";
-        let cardHeight = activeCardHeight + "px";
-        let dropShadowY = activeDropShadowY;
-        let dropShadowBlur = activeDropShadowBlur;
-        let fontSize = activeFontSize;
-        let bottom = activeBottom;
+        let cardVariables = new CardVariables(
+            0,
+            defaultCardWidth,
+            defaultCardHeight,
+            rotation,
+            defaultFontSize,
+            defaultBottom,
+            defaultDropShadowY,
+            defaultDropShadowBlur
+        );
 
         if(direction == 0)
         {
-            left = halfScreenWidth + "px";
-            yOffset = 0;
+            cardVariables.left = halfScreenWidth + "px";
+            cardVariables.cardWidth = activeCardWidth;
+            cardVariables.cardHeight = activeCardHeight;
+            cardVariables.dropShadowY = activeDropShadowY;
+            cardVariables.dropShadowBlur = activeDropShadowBlur;
+            cardVariables.fontSize = activeFontSize;
+            cardVariables.bottom = activeBottom;
+            cardVariables.rotation = "0turn";
         }
         else
         {
@@ -165,49 +179,10 @@ function updateCssVariables(i, distance, direction, halfScreenWidth, trackStyle,
                     distancePercentage * cardEaseXOffset;
             }
 
-            cardWidth = defaultCardWidth + "px";
-            cardHeight = defaultCardHeight + "px";
-            dropShadowY = defaultDropShadowY;
-            dropShadowBlur = defaultDropShadowBlur;
-            fontSize = defaultFontSize;
-            bottom = defaultBottom;
-            left = leftFloat + "px";
+            cardVariables.left = leftFloat + "px";
         }
 
-        let cardStyle = allCards[i].style;
-        cardStyle.setProperty("--zIndex", peekCardCount - distance);
-        cardStyle.setProperty("--dropShadowY", dropShadowY + "px");
-        cardStyle.setProperty("--dropShadowBlur", dropShadowBlur + "px");
-        cardStyle.setProperty("--fontSize", fontSize + "pt");
-        cardStyle.setProperty("--bottom", bottom + "%");
-
-        if(oldVariables.has(i))
-        {
-            allCards[i].animate([
-                {
-                    "--left": oldVariables.get(i).left,
-                    "--cardWidth": oldVariables.get(i).cardWidth,
-                    "--cardHeight": oldVariables.get(i).cardHeight,
-                    "--rotation": oldVariables.get(i).rotation
-                },
-                {
-                    "--left": left,
-                    "--cardWidth": cardWidth,
-                    "--cardHeight": cardHeight,
-                    "--rotation": rotation
-                }
-            ], {duration: 500, easing: "ease", fill: "forwards"});
-        }
-        else
-        {
-            cardStyle.setProperty("--left", left);
-            cardStyle.setProperty("--cardWidth", cardWidth);
-            cardStyle.setProperty("--cardHeight", cardHeight);
-            cardStyle.setProperty("--rotation", rotation);
-        }
-
-        oldVariables.set(i, new CardVariables(left, cardWidth, cardHeight, rotation));
-
+        animateActiveCards(i, distance, cardVariables);
     }
 
     allCards[i].style.setProperty("--display", display);
@@ -220,11 +195,53 @@ function getDistancePercentage(distance)
     const invertedNormDistance = 1 - normalizedDistance;
     return 1 - invertedNormDistance * invertedNormDistance;
 }
-        
-function animateCardOffset(newOffset, instant)
+
+function animateActiveCards(i, distance, cardVariables)
 {
-    cardTrack.style.setProperty("--cardOffset", `${newOffset}px`);
+    let cardStyle = allCards[i].style;
+    cardStyle.setProperty("--zIndex", peekCardCount - distance);
+
+    if(oldVariables.has(i))
+    {
+        lastState = oldVariables.get(i);
+        allCards[i].animate([
+            {
+                "--left": lastState.left,
+                "--cardWidth": lastState.cardWidth,
+                "--cardHeight": lastState.cardHeight,
+                "--rotation": lastState.rotation,
+                "--fontSize": lastState.fontSize,
+                "--bottom": lastState.bottom,
+                "--dropShadowY": lastState.dropShadowY,
+                "--dropShadowBlur": lastState.dropShadowBlur,
+            },
+            {
+                "--left": cardVariables.left,
+                "--cardWidth": cardVariables.cardWidth,
+                "--cardHeight": cardVariables.cardHeight,
+                "--rotation": cardVariables.rotation,
+                "--fontSize": cardVariables.fontSize,
+                "--bottom": cardVariables.bottom,
+                "--dropShadowY": cardVariables.dropShadowY,
+                "--dropShadowBlur": cardVariables.dropShadowBlur,
+            }
+        ], {duration: 400, easing: "ease-in-out", fill: "forwards"});
+    }
+    else
+    {
+        cardStyle.setProperty("--left", cardVariables.left);
+        cardStyle.setProperty("--cardWidth", cardVariables.cardWidth);
+        cardStyle.setProperty("--cardHeight", cardVariables.cardHeight);
+        cardStyle.setProperty("--rotation", cardVariables.rotation);
+        cardStyle.setProperty("--fontSize", cardVariables.fontSize);
+        cardStyle.setProperty("--bottom", cardVariables.bottom);
+        cardStyle.setProperty("--dropShadowY", cardVariables.dropShadowY);
+        cardStyle.setProperty("--dropShadowBlur", cardVariables.dropShadowBlur);
+    }
+
+    oldVariables.set(i, cardVariables);
 }
+        
 
 //load page by id name
 async function loadProjectContent(arrayIndex)

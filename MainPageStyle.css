@@ -186,17 +186,37 @@ h2 {
 @property --rotation{
     syntax: '<angle>';
     inherits: false;
-    initial-value: 0;
+    initial-value: 0turn;
+}
+
+@property --fontSize{
+    syntax: '<length>';
+    inherits: true;
+    initial-value: 10pt;
+}
+
+@property --bottom{
+    syntax: '<length>';
+    inherits: true;
+    initial-value: 0%;
+}
+
+@property --dropShadowY{
+    syntax: '<length>';
+    inherits: true;
+    initial-value: 0px;
+}
+
+@property --dropShadowBlur{
+    syntax: '<length>';
+    inherits: true;
+    initial-value: 0px;
 }
 
 .card{
     --display: none;
     --visibility: hidden;
     --zIndex: 0;
-    --dropShadowY: 0;
-    --dropShadowBlur: 0;
-    --fontSize: 0;
-    --bottom:0;
 
     width: var(--cardWidth);
     min-width: var(--cardWidth);;
