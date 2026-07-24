@@ -9,7 +9,7 @@ const allCards = cardTrack.querySelectorAll(".card");
 const cardCount = allCards.length;
 const halfCardCount = Math.floor( cardCount / 2);
 const hasEvenCardCount = cardCount % 2 == 0;
-const peekCardCount = 2;
+let peekCardCount;
 
 let cardIndex = 0;
 let cardFlowDirection;
@@ -32,7 +32,8 @@ let activeBottom;
 let cardBaseXOffset;
 let cardEaseXOffset;
 
-let oldCardVariables = new Map();
+const prevCardVariables = new Map();
+const cardAnimations = new Map();
 let halfScreenWidth = 0;
 
 cardIndex = Math.floor((cardCount + (hasEvenCardCount ? -1 : 0)) / 2.0);
@@ -76,18 +77,19 @@ function fetchCardVariables()
 
     cardBaseXOffset = parseFloat(style.getPropertyValue("--cardBaseXOffset"));
     cardEaseXOffset = parseFloat(style.getPropertyValue("--cardEaseXOffset"));
+
+    peekCardCount = parseInt(style.getPropertyValue("--peekCardCount"));
 }
 
 function updateCardSelection(prevCardIndex)
 {
-    fetchCardVariables();
     const prevArrayIndex = cardToArrayIndex(prevCardIndex);
     const arrayIndex = cardToArrayIndex(cardIndex);
     loadProjectContent(arrayIndex);
     updateCardVisuals(arrayIndex);
 }
 
-function updateCardVisuals(arrayIndex)
+function updateCardVisuals(arrayIndex, instant = false)
 {
     halfScreenWidth = window.innerWidth * .5;
     const random = new alea('portfolio');
@@ -99,7 +101,7 @@ function updateCardVisuals(arrayIndex)
         //need to always get the random number so the rotation for each card stays the same
         const randomNumber = random();
         let rotation = ((random() - .5) * .1) + "turn";
-        initateCardAnimation(i, distance, direction, trackStyle, rotation);
+        initateCardAnimation(i, distance, direction, trackStyle, rotation, instant);
     }
 }
 
@@ -131,7 +133,7 @@ function getDistanceAndDirection(i, arrayIndex)
     return [distance, direction]
 }
 
-function initateCardAnimation(i, distance, direction, trackStyle, rotation)
+function initateCardAnimation(i, distance, direction, trackStyle, rotation, instant)
 {
     let display = "none";
     let visibility = "hidden";
@@ -141,7 +143,7 @@ function initateCardAnimation(i, distance, direction, trackStyle, rotation)
         display = "block";
         visibility = "visible";
         const cardVariables = getActiveCardVariables(i, distance, direction, rotation);
-        animateActiveCard(i, distance, cardVariables);
+        animateActiveCard(i, distance, cardVariables, rotation, instant);
     }
     else if(distance == peekCardCount + 1 && direction == cardFlowDirection)
     {
@@ -214,15 +216,15 @@ function getDistancePercentage(distance)
 
 function setAppearingCardVariables(i, rotation)
 {
-    if(oldCardVariables.has(i))
+    if(prevCardVariables.has(i))
     {
-        const oldV = oldCardVariables.get(i);
+        const oldV = prevCardVariables.get(i);
         oldV.left = halfScreenWidth + "px";
         oldV.cardWidth = "0px";
         oldV.cardHeight = "0px";
         oldV.fontSize = "0pt";
     }
-    else
+    else if(prevCardVariables.size > 0)
     {
         const oldV = new CardVariables(
             halfScreenWidth + "px",
@@ -235,17 +237,19 @@ function setAppearingCardVariables(i, rotation)
             defaultDropShadowBlur
         );
 
-        oldCardVariables.set(i, oldV);
+        prevCardVariables.set(i, oldV);
     }
 }
 
-function animateActiveCard(i, distance, cardVariables, rotation)
+function animateActiveCard(i, distance, cardVariables, rotation, instant)
 {
     let cardStyle = allCards[i].style;
     cardStyle.setProperty("--zIndex", peekCardCount - distance);
 
-    if(oldCardVariables.has(i))
-        animateSingleCard(allCards[i], oldCardVariables.get(i), cardVariables);
+    if(instant)
+        setCssVariablesInstant(i, cardVariables);
+    else if(prevCardVariables.has(i))
+        animateSingleCard(i, prevCardVariables.get(i), cardVariables);
     else
     {
         const startCard = new CardVariables(
@@ -259,15 +263,28 @@ function animateActiveCard(i, distance, cardVariables, rotation)
             "0px"
         );
         const duration = distance / peekCardCount * 200 + 400;
-        animateSingleCard(allCards[i], startCard, cardVariables, duration);
+        animateSingleCard(i, startCard, cardVariables, duration);
     }
 
-    oldCardVariables.set(i, cardVariables);
+    prevCardVariables.set(i, cardVariables);
 }
 
-function animateSingleCard(card, from, to, duration = 400)
+function setCssVariablesInstant(i, cardVariables)
 {
-    return card.animate([
+    cardStyle = allCards[i].style;
+    cardStyle.setProperty("--left", cardVariables.left);
+    cardStyle.setProperty("--cardWidth", cardVariables.cardWidth);
+    cardStyle.setProperty("--cardHeight", cardVariables.cardHeight);
+    cardStyle.setProperty("--rotation", cardVariables.rotation);
+    cardStyle.setProperty("--fontSize", cardVariables.fontSize);
+    cardStyle.setProperty("--bottom", cardVariables.bottom);
+    cardStyle.setProperty("--dropShadowY", cardVariables.dropShadowY);
+    cardStyle.setProperty("--dropShadowBlur", cardVariables.dropShadowBlur);
+}
+
+function animateSingleCard(i, from, to, duration = 400)
+{
+    const animation =  allCards[i].animate([
         {
             "--left": from.left,
             "--cardWidth": from.cardWidth,
@@ -289,6 +306,9 @@ function animateSingleCard(card, from, to, duration = 400)
             "--dropShadowBlur": to.dropShadowBlur,
         }
     ], {duration: duration, easing: "ease-in-out", fill: "forwards"});
+
+    cardAnimations.set(i, animation);
+    return animation;
 }
 
 function animateDisappearingCard(i, rotation)
@@ -296,7 +316,7 @@ function animateDisappearingCard(i, rotation)
     cardStyle = allCards[i].style;
     cardStyle.setProperty("--zIndex", -1);
 
-    const oldVariables = oldCardVariables.get(i);
+    const oldVariables = prevCardVariables.get(i);
     const newValues = new CardVariables(
         halfScreenWidth + "px",
         "0px",
@@ -308,7 +328,7 @@ function animateDisappearingCard(i, rotation)
         oldVariables.dropShadowBlur
     );
 
-    const animation = animateSingleCard(allCards[i], oldCardVariables.get(i), newValues);
+    const animation = animateSingleCard(i, prevCardVariables.get(i), newValues);
 
     animation.finished.then(() =>
     {
@@ -366,7 +386,14 @@ leftBtn.addEventListener("click", () => {
 
 addEventListener("resize", () => {
     fetchCardVariables();
-    updateCardVisuals(cardToArrayIndex(cardIndex));
+
+    prevCardVariables.clear();
+    cardFlowDirection = 0;
+
+    cardAnimations.forEach(animation => animation.cancel());
+    cardAnimations.clear();
+
+    updateCardVisuals(cardToArrayIndex(cardIndex), true);
 });
 
 fetchCardVariables();

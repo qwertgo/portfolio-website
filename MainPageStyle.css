@@ -33,6 +33,9 @@
     --bgGradientHeight: 180px;
     --bgGradientOffset: 400px;
 
+
+    /* JavaScript */
+    --peekCardCount: 2;
 }
 
 /* #region fonts */
@@ -745,14 +748,16 @@ footer a:hover, .impressum a:hover{
         --activeCardHeight: 420px;
         --activeFontSize: 30pt;
 
-        --cardBaseXOffset: 80px;
-        --cardEaseXOffset: 180px;
+        --cardBaseXOffset: 50px;
+        --cardEaseXOffset: 250px;
 
         --mainPanelWidth: 1000px;
         --buttonMargin: 40px;
 
         --bgGradientHeight: 380px;
         --bgGradientOffset: 550px;
+
+        --peekCardCount: 3;
     }
 
     header {
