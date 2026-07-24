@@ -1,5 +1,6 @@
 const leftBtn = document.querySelector(".arrow.left"); 
 const rightBtn = document.querySelector(".arrow.right"); 
+const headerBtn = document.querySelector(".header-button");
 
 const cardTrack = document.querySelector(".card-track");
 const projectContent = document.querySelector(".project-content");
@@ -381,6 +382,14 @@ leftBtn.addEventListener("click", () => {
     cardIndex %= cardCount;
     cardFlowDirection = 1;
     
+    updateCardSelection(prevCardIndex);
+});
+
+headerBtn.addEventListener("click", () =>{
+    const prevCardIndex = cardIndex;
+    cardIndex = halfCardCount - (hasEvenCardCount ? 1 : 0);
+    cardFlowDirection = 0;
+    prevCardVariables.clear();
     updateCardSelection(prevCardIndex);
 });
 

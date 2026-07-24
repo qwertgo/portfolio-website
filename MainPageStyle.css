@@ -138,6 +138,11 @@ header {
     margin-left: 24px;
 }
 
+.header-button{
+    background-color: inherit;
+    border-style: none;
+}
+
 h1{
     color: white;
     font-family: "Darumadrop One", Helvetica, sans-serif ;
