@@ -332,8 +332,10 @@ async function loadProjectContent(arrayIndex)
         
         const htmlData = await response.text();
 
+        cleanupVideos(projectContent);
         projectContent.innerHTML = '';
         projectContent.innerHTML = htmlData;
+        initLazyVideos(projectContent);
     }
     catch(error)
     {
