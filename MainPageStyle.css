@@ -165,19 +165,34 @@ h2 {
     overflow-x: hidden;
 }
 
- @property --left{
+@property --left{
     syntax: '<length>';
     inherits: false;
-    initial-value: 0px;
+    initial-value: 0;
+}
+
+@property --cardWidth{
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 0;
+}
+
+@property --cardHeight{
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 0;
+}
+
+@property --rotation{
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0;
 }
 
 .card{
     --display: none;
     --visibility: hidden;
     --zIndex: 0;
-    --rotation: 0;
-    --cardWidth: 0;
-    --cardHeight: 0;
     --dropShadowY: 0;
     --dropShadowBlur: 0;
     --fontSize: 0;
@@ -473,23 +488,22 @@ h4{
     --text-indentation: 2%;
 }
 
-img.info-video{
+video.info-video{
     width: 100%;
     height: auto;
-    margin-bottom: calc(var(--defaultMargin) * .4);
+    margin-bottom: calc(var(--defaultMargin) * .3);
 }
 
 #remove-margin{
     margin-bottom: 0;
 }
 
-ul, #larger-margin{
-    margin-bottom: calc(var(--defaultMargin) * .3);
+ul, #larger-margin, .socials-wrapper{
+    margin-bottom: calc(var(--defaultMargin) * .6);
 }
 
 .info-text p{
-    margin-bottom: calc(var(--defaultMargin) * .125);
-    /* margin-left: var(--text-indentation); */
+    margin-bottom: calc(var(--defaultMargin) * .15);
 }
 
 ul{
@@ -498,11 +512,11 @@ ul{
 
 
 li{
-    margin-bottom: calc(var(--defaultMargin) * .07)
+    margin-bottom: calc(var(--defaultMargin) * .2)
 }
 
 .info-text h4{
-    margin-bottom: calc(var(--defaultMargin) * .15);
+    margin-bottom: calc(var(--defaultMargin) * .3);
 }
 
 .subheader{
@@ -516,7 +530,6 @@ li{
     --mainPanelLeftMargin: calc((100vw - var(--mainPanelWidth)) * -0.5);
     margin-left: var(--mainPanelLeftMargin);
     background-color: var(--bgColorMid);
-    margin-bottom: calc(var(--defaultMargin) * .4);
 }
 
 .socials{
