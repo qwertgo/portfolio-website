@@ -13,7 +13,7 @@ const hasEvenCardCount = cardCount % 2 == 0;
 let peekCardCount;
 
 let cardIndex = 0;
-let cardFlowDirection;
+let cardFlowDirection = 0;
 
 //css variables
 let defaultCardWidth;
