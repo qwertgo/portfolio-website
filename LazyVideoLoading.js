@@ -1,5 +1,32 @@
 let videoObserver;
 
+function loadAndPlayVideo(video) {
+    if (!video.dataset.loaded) {
+        const mobileSrc = video.dataset.srcMobile;
+        const desktopSrc = video.dataset.srcDesktop;
+
+        if (mobileSrc) {
+            const sourceMobile = document.createElement("source");
+            sourceMobile.src = mobileSrc;
+            sourceMobile.media = "(max-width: 639px)";
+            sourceMobile.type = "video/mp4";
+            video.appendChild(sourceMobile);
+        }
+
+        if (desktopSrc) {
+            const sourceDesktop = document.createElement("source");
+            sourceDesktop.src = desktopSrc;
+            sourceDesktop.type = "video/mp4";
+            video.appendChild(sourceDesktop);
+        }
+
+        video.load();
+        video.dataset.loaded = "true";
+    }
+
+    video.play().catch(() => {});
+}
+
 function initLazyVideos(container) {
     if (videoObserver) {
         videoObserver.disconnect();
@@ -10,25 +37,14 @@ function initLazyVideos(container) {
             const video = entry.target;
 
             if (entry.isIntersecting) {
-                // if sources haven't been loaded yet, swap data-src -> src and load
-                const sources = video.querySelectorAll("source[data-src]");
-                if (sources.length > 0) {
-                    sources.forEach((source) => {
-                        source.src = source.dataset.src;
-                        source.removeAttribute("data-src");
-                    });
-                    video.load();
-                }
-
-                video.play().catch(() => {
-                    // autoplay can be rejected before user interaction; ignore
-                });
+                loadAndPlayVideo(video);
             } else {
                 video.pause();
             }
         });
     }, {
         root: null,
+        rootMargin: "100px 0px 100px 0px",
         threshold: 0
     });
 
@@ -43,11 +59,14 @@ function cleanupVideos(container) {
     }
 
     container.querySelectorAll("video.info-video").forEach((video) => {
+        if (!video.dataset.loaded) {
+            return; // never loaded, nothing to clean up
+        }
+
         video.pause();
-        video.removeAttribute("src"); // in case it was ever set directly
-        video.querySelectorAll("source").forEach((source) => {
-            source.removeAttribute("src");
-        });
-        video.load(); // forces the browser to actually drop the decode buffer
+        video.querySelectorAll("source").forEach((source) => source.remove());
+        video.removeAttribute("src");
+        video.load();
+        delete video.dataset.loaded;
     });
 }

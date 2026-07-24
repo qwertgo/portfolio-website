@@ -168,7 +168,7 @@ h2 {
 @property --left{
     syntax: '<length>';
     inherits: false;
-    initial-value: 0;
+    initial-value: -99999px;
 }
 
 @property --cardWidth{
