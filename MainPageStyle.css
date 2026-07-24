@@ -33,6 +33,9 @@
     --bgGradientHeight: 180px;
     --bgGradientOffset: 400px;
 
+
+    /* JavaScript */
+    --peekCardCount: 2;
 }
 
 /* #region fonts */
@@ -135,6 +138,11 @@ header {
     margin-left: 24px;
 }
 
+.header-button{
+    background-color: inherit;
+    border-style: none;
+}
+
 h1{
     color: white;
     font-family: "Darumadrop One", Helvetica, sans-serif ;
@@ -168,7 +176,7 @@ h2 {
 @property --left{
     syntax: '<length>';
     inherits: false;
-    initial-value: 0;
+    initial-value: -99999px;
 }
 
 @property --cardWidth{
@@ -186,17 +194,37 @@ h2 {
 @property --rotation{
     syntax: '<angle>';
     inherits: false;
-    initial-value: 0;
+    initial-value: 0turn;
+}
+
+@property --fontSize{
+    syntax: '<length>';
+    inherits: true;
+    initial-value: 10pt;
+}
+
+@property --bottom{
+    syntax: '<length>';
+    inherits: true;
+    initial-value: 0%;
+}
+
+@property --dropShadowY{
+    syntax: '<length>';
+    inherits: true;
+    initial-value: 0px;
+}
+
+@property --dropShadowBlur{
+    syntax: '<length>';
+    inherits: true;
+    initial-value: 0px;
 }
 
 .card{
     --display: none;
     --visibility: hidden;
     --zIndex: 0;
-    --dropShadowY: 0;
-    --dropShadowBlur: 0;
-    --fontSize: 0;
-    --bottom:0;
 
     width: var(--cardWidth);
     min-width: var(--cardWidth);;
@@ -725,14 +753,16 @@ footer a:hover, .impressum a:hover{
         --activeCardHeight: 420px;
         --activeFontSize: 30pt;
 
-        --cardBaseXOffset: 80px;
-        --cardEaseXOffset: 180px;
+        --cardBaseXOffset: 50px;
+        --cardEaseXOffset: 250px;
 
         --mainPanelWidth: 1000px;
         --buttonMargin: 40px;
 
         --bgGradientHeight: 380px;
         --bgGradientOffset: 550px;
+
+        --peekCardCount: 3;
     }
 
     header {
